@@ -28,13 +28,16 @@
   },
   "homepage": "https://github.com/ljw1412/web-crawler#readme",
   "dependencies": {
-    "async": "^3.2.0",
     "chalk": "^4.0.0",
-    "cheerio": "^1.0.0-rc.3"
+    "cheerio": "^1.0.0-rc.3",
+    "fastq": "^1.7.0",
+    "superagent": "^5.2.2",
+    "superagent-proxy": "^2.0.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.1.0",
     "@rollup/plugin-node-resolve": "^7.1.3",
+    "@types/superagent": "^4.1.7",
     "rimraf": "^3.0.2",
     "rollup": "^2.7.6",
     "rollup-plugin-typescript2": "^0.27.0",
