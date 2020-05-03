@@ -29,6 +29,7 @@
   "homepage": "https://github.com/ljw1412/web-crawler#readme",
   "dependencies": {
     "async": "^3.2.0",
+    "chalk": "^4.0.0",
     "cheerio": "^1.0.0-rc.3"
   },
   "devDependencies": {
@@ -39,7 +40,6 @@
     "rollup-plugin-typescript2": "^0.27.0",
     "ts-node": "^8.9.1",
     "tsconfig-paths": "^3.9.0",
-    "tslib": "^1.11.1",
     "typescript": "^3.8.3"
   }
 }
