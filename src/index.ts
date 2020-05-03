@@ -1,5 +1,4 @@
 import Crawler from '@/classes/Crawler'
+import Page from '@/classes/Page'
 
-new Crawler()
-
-console.log('hello world')
+export { Crawler, Page }
