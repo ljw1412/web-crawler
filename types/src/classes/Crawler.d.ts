@@ -1,15 +1,23 @@
+import fastq from 'fastq';
 import Page from './Page';
+interface CrawlerOptions {
+    concurrency: number;
+    worker?: fastq.worker<Crawler>;
+    callback?: WebCrawler.Callback;
+}
 export default class Crawler {
     private queue;
     private callbackFn?;
     private filterFn;
-    constructor(callback?: WebCrawler.Callback);
-    get size(): number;
+    constructor(options?: CrawlerOptions);
+    get size(): () => number;
     get isEmpty(): boolean;
-    injectCallbackToPage(page: Page): void;
     callback(callback: WebCrawler.Callback): this;
     filter(filter: WebCrawler.Filter): this;
+    getPageCallback(page: Page): WebCrawler.Callback;
     add(page: Page | Page[]): this;
     start(): void;
-    stop(): void;
+    pause(): void;
+    stop(drain: boolean): any;
 }
+export {};

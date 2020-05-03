@@ -1,4 +1,5 @@
 import typescript from 'rollup-plugin-typescript2'
+import json from '@rollup/plugin-json'
 
 const tsPlugin = typescript({
   clean: true,
@@ -9,7 +10,8 @@ const tsPlugin = typescript({
 
 const nodePlugins = [
   require('@rollup/plugin-node-resolve')({
-    preferBuiltins: true
+    preferBuiltins: true,
+    browser: true
   }),
   require('@rollup/plugin-commonjs')({
     sourceMap: false
@@ -19,5 +21,5 @@ const nodePlugins = [
 export default {
   input: 'src/index.ts',
   output: { file: 'lib/web-crawler.cjs.js', format: 'cjs' },
-  plugins: [tsPlugin, ...nodePlugins]
+  plugins: [json(), tsPlugin, ...nodePlugins]
 }
