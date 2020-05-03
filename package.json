@@ -5,7 +5,7 @@
   "description": "基于Node.js的网络爬虫",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node index.ts",
+    "start": "ts-node -r tsconfig-paths/register src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,6 +24,8 @@
   },
   "devDependencies": {
     "ts-node": "^8.9.1",
+    "tsconfig-paths": "^3.9.0",
+    "tslib": "^1.11.1",
     "typescript": "^3.8.3"
   }
 }

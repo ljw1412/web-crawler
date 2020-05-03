@@ -1,1 +1,5 @@
-export default class Crawler {}
+export default class Crawler {
+  constructor() {
+    console.log('new Crawler')
+  }
+}
