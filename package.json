@@ -3,9 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "description": "基于Node.js的网络爬虫",
-  "main": "index.js",
+  "main": "./lib/web-crawler.cjs.js",
+  "types": "./types/index.d.ts",
+  "files": [
+    "lib",
+    "src",
+    "types"
+  ],
   "scripts": {
-    "start": "ts-node -r tsconfig-paths/register src/index.ts",
+    "start": "ts-node --files -r tsconfig-paths/register src/index.ts",
+    "build": "rimraf ./lib ./types/src && rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,6 +30,11 @@
     "cheerio": "^1.0.0-rc.3"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^11.1.0",
+    "@rollup/plugin-node-resolve": "^7.1.3",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.7.6",
+    "rollup-plugin-typescript2": "^0.27.0",
     "ts-node": "^8.9.1",
     "tsconfig-paths": "^3.9.0",
     "tslib": "^1.11.1",
