@@ -12,7 +12,9 @@
   ],
   "scripts": {
     "start": "ts-node --files -r tsconfig-paths/register src/index.ts",
+    "start:project": "ts-node --files -r tsconfig-paths/register project/qinqinghe.ts",
     "build": "rimraf ./lib ./types/src && rollup -c",
+    "ts": "ts-node -h",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

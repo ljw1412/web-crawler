@@ -2,8 +2,9 @@ import typescript from 'rollup-plugin-typescript2'
 
 const tsPlugin = typescript({
   clean: true,
-  tsconfig: 'tsconfig.json',
-  useTsconfigDeclarationDir: true
+  tsconfig: 'tsconfig.rollup.json',
+  useTsconfigDeclarationDir: true,
+  tsconfigOverride: { exclude: ['project/**/*.ts'] }
 })
 
 const nodePlugins = [
