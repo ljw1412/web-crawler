@@ -1,7 +1,6 @@
 {
-  "name": "web-crawler",
-  "version": "0.0.1",
-  "private": true,
+  "name": "@ljw1412/web-crawler",
+  "version": "0.0.2",
   "description": "基于Node.js的网络爬虫",
   "main": "./lib/web-crawler.cjs.js",
   "types": "./types/index.d.ts",
@@ -20,7 +19,7 @@
     "url": "git+https://github.com/ljw1412/web-crawler.git"
   },
   "author": "ljw1412",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ljw1412/web-crawler/issues"
   },
