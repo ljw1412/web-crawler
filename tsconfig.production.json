@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "rootDir": ".",
+    "rootDir": "./src",
     "outDir": "lib",
     "sourceMap": false,
     "target": "esnext",
-    "module": "esnext",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "allowJs": false,
     "strict": true,
@@ -14,13 +14,8 @@
     "esModuleInterop": true,
     "removeComments": false,
     "lib": ["esnext", "dom"],
-    "typeRoots": ["node_modules/@types"],
-    "paths": {
-      "@/*": ["src/*"]
-    },
-    "declaration": true,
-    "declarationDir": "types"
+    "typeRoots": ["node_modules/@types"]
   },
-  "include": ["src/**/*.ts", "types/**/*.d.ts", "project/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }

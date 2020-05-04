@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "rootDir": ".",
+    "rootDir": "./src",
     "outDir": ".temp/lib",
+    "declarationDir": ".temp/types",
+    "declaration": true,
     "sourceMap": false,
     "target": "esnext",
     "module": "CommonJS",
@@ -16,6 +18,6 @@
     "lib": ["esnext", "dom"],
     "typeRoots": ["node_modules/@types"]
   },
-  "include": ["src/**/*.ts", "project/**/*.ts", "index.d.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }

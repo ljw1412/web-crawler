@@ -106,6 +106,8 @@ dist
 
 .vscode/
 
+.temp/
+
 lib/
 
 output/
