@@ -33,5 +33,6 @@ export default {
     { file: 'lib/web-crawler.min.js', format: 'cjs' },
     { file: 'lib/web-crawler.esm.js', format: 'esm' }
   ],
-  plugins: [json(), tsPlugin, ...nodePlugins, minifyPlugin]
+  plugins: [json(), tsPlugin, ...nodePlugins, minifyPlugin],
+  external: ['cheerio']
 }

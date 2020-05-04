@@ -1,6 +1,6 @@
 {
   "name": "web-crawler",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "private": true,
   "description": "基于Node.js的网络爬虫",
   "main": "./lib/web-crawler.cjs.js",
@@ -25,9 +25,11 @@
     "url": "https://github.com/ljw1412/web-crawler/issues"
   },
   "homepage": "https://github.com/ljw1412/web-crawler#readme",
+  "peerDependencies": {
+    "cheerio": "^1.0.0-rc.3"
+  },
   "dependencies": {
     "chalk": "^4.0.0",
-    "cheerio": "^1.0.0-rc.3",
     "fastq": "^1.7.0",
     "superagent": "^5.2.2",
     "superagent-proxy": "^2.0.0"
