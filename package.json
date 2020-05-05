@@ -1,6 +1,6 @@
 {
   "name": "@ljw1412/web-crawler",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "基于Node.js的网络爬虫",
   "main": "./lib/index.js",
   "types": "./index.d.ts",
@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "clean": "rimraf ./lib ./.temp",
-    "start": "ts-node --files -r tsconfig-paths/register project/qinqinghe.ts",
+    "start": "ts-node --files -r tsconfig-paths/register project/dmzj.ts",
     "build": "rimraf ./lib && tsc -p ./tsconfig.production.json",
     "build:dev": "rimraf ./.temp && tsc -p ./tsconfig.dev.json",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -36,11 +36,9 @@
   "devDependencies": {
     "@types/cheerio": "^0.22.18",
     "@types/superagent": "^4.1.7",
-    "add": "^2.0.6",
     "rimraf": "^3.0.2",
     "ts-node": "^8.9.1",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^3.8.3",
-    "yarn": "^1.22.4"
+    "typescript": "^3.8.3"
   }
 }
