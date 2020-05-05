@@ -22,6 +22,8 @@ const defaultWorker: fastq.worker<Crawler> = async function(
     if (page.type === 'html') {
       data.html = res.text
       data.$ = cheerio.load(res.text)
+    } else if (page.type === 'json') {
+      data.text = res.text
     }
     done(null, data)
   } catch (error) {
@@ -47,14 +49,6 @@ export default class Crawler {
     this.callbackFn = callback
     this.queue.pause()
     this.setTimeout(timeout)
-  }
-
-  get size() {
-    return this.queue.length
-  }
-
-  get isEmpty() {
-    return !!this.size
   }
 
   setTimeout(timeout: number) {

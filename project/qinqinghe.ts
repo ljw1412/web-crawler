@@ -1,4 +1,4 @@
-import { Crawler, Page } from '@/index'
+import { Crawler, Page } from '../src/index'
 import chalk from 'chalk'
 import path from 'path'
 import URL from 'url'
