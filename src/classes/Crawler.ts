@@ -1,97 +1,124 @@
+import logger from '../utils/logger'
 import fastq from 'fastq'
-import chalk from 'chalk'
-import cheerio from 'cheerio'
 import request from 'superagent'
 import Page from './Page'
 
-interface CrawlerOptions {
-  concurrency: number
-  worker?: fastq.worker<Crawler>
-  callback?: WebCrawler.Callback
-  timeout?: number
+// 默认数据合并
+function assignData(
+  data: WebCrawler.CallbackData,
+  type: string,
+  resp: request.Response
+) {
+  switch (type) {
+    case 'html':
+      data.raw = resp.text
+      data.$ = cheerio.load(data.raw)
+    case 'json':
+      data.raw = resp.text
+      try {
+        data.json = JSON.parse(data.raw)
+      } catch (err) {
+        logger.error('[JSON解析错误]', data.page.url, '\n', err)
+      }
+      break
+    case 'image':
+      break
+  }
 }
 
-const defaultWorker: fastq.worker<Crawler> = async function(
+// 默认网络请求处理
+const defaultWorker: WebCrawler.RequestWorker = async function(
   page: Page,
   done: WebCrawler.Callback
 ) {
-  console.log(chalk.bgYellow.magenta.bold('[发起请求]'), page.url)
+  const { type, url, timeout } = page
+  const data: WebCrawler.CallbackData = { raw: '', page }
+  let error = null
+
   try {
-    const data: WebCrawler.Done = { page }
-    const res = await request.get(page.url).timeout(page.timeout!)
-    if (page.type === 'html') {
-      data.html = res.text
-      data.$ = cheerio.load(res.text)
-    } else if (page.type === 'json') {
-      data.text = res.text
-    }
-    done(null, data)
-  } catch (error) {
-    done(error, { page })
+    logger.info('[发起请求]', url)
+    const resp = await request.get(url).timeout(timeout!)
+    assignData(data, type, resp)
+  } catch (err) {
+    error = err
+    logger.error('[请求错误]', url, '\n', err)
   }
+
+  done(error, data)
+}
+
+// 未定义回调的错误提示
+function undefinedCallback(
+  err: Error | null,
+  { page }: WebCrawler.CallbackData
+) {
+  logger.error('[回调错误]', '没有进行回调处理:\n', page)
 }
 
 export default class Crawler {
-  private queue!: fastq.queue
-  private callbackFn?: WebCrawler.Callback
-  private filterFn: WebCrawler.Filter = page => true
-  private timeout!: number
+  _queue!: WebCrawler.Queue
+  _concurrency!: number
+  _timeout!: number
+  _filter: WebCrawler.Filter = _ => true
+  _callback?: WebCrawler.Callback
 
-  constructor(options: CrawlerOptions = { concurrency: 1 }) {
-    const {
+  constructor(options: WebCrawler.CrawlerOptions = {}) {
+    let {
       concurrency = 1,
       worker = defaultWorker,
-      callback,
-      timeout = 20000
+      timeout = 20 * 1000,
+      callback
     } = options
 
-    this.queue = fastq(this, worker, concurrency)
-    this.callbackFn = callback
-    this.queue.pause()
-    this.setTimeout(timeout)
+    this._concurrency = concurrency
+    this._timeout = timeout
+    this._callback = callback
+    this._initQueue(worker, concurrency)
   }
 
-  setTimeout(timeout: number) {
-    this.timeout = timeout
+  _initQueue(worker: WebCrawler.RequestWorker, concurrency: number) {
+    this._queue = fastq(this, worker, concurrency)
+    this.pause()
+  }
+
+  _getPageCallback(page: Page) {
+    return page.callback || this._callback || undefinedCallback
+  }
+
+  timeout(timeout: number) {
+    this._timeout = timeout
+    return this
   }
 
   callback(callback: WebCrawler.Callback) {
-    this.callbackFn = callback
+    this._callback = callback
     return this
   }
 
   filter(filter: WebCrawler.Filter) {
-    this.filterFn = filter
+    this._filter = filter
     return this
   }
 
-  getPageCallback(page: Page) {
-    if (page.callback) return page.callback
-    if (this.callbackFn) return this.callbackFn
-    return () => {
-      console.error(chalk.red('[Error]', '没有进行回调处理:\n'), page)
-    }
-  }
-
   add(page: Page | Page[]) {
-    let pages = !Array.isArray(page) ? [page] : page
-    pages = pages.filter(this.filterFn)
+    let pages = Array.isArray(page) ? page : [page]
+    pages = pages.filter(this._filter)
     pages.forEach(page => {
-      if (!page.timeout) page.timeout = this.timeout
-      this.queue.push(page, this.getPageCallback(page))
+      if (!page.timeout) page.timeout = this._timeout
+      this._queue.push(page, this._getPageCallback(page))
     })
     return this
   }
 
   start() {
-    this.queue.resume()
+    this._queue.resume()
   }
 
   pause() {
-    this.queue.pause()
+    this._queue.pause()
   }
 
   stop(drain: boolean) {
-    return drain ? this.queue.killAndDrain() : this.queue.kill()
+    return drain ? this._queue.killAndDrain() : this._queue.kill()
   }
 }
