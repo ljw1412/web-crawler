@@ -1,7 +1,8 @@
-import logger from '../utils/logger'
 import fastq from 'fastq'
+import cheerio from 'cheerio'
 import request from 'superagent'
 import Page from './Page'
+import logger from '../utils/logger'
 
 // 默认数据合并
 function assignData(
@@ -13,6 +14,7 @@ function assignData(
     case 'html':
       data.raw = resp.text
       data.$ = cheerio.load(data.raw)
+      break
     case 'json':
       data.raw = resp.text
       try {
