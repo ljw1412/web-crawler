@@ -1,4 +1,4 @@
-import { Crawler, Page } from '../src/index'
+import { Crawler, Page, logger } from '../src/index'
 import chalk from 'chalk'
 import path from 'path'
 import URL from 'url'
@@ -15,12 +15,12 @@ function createPage(type: 'list' | 'detail', url: string) {
 
 const c = new Crawler({ concurrency: 5 })
 
-c.callback((err, { html, $, page }) => {
+c.callback((err, { raw, $, page }) => {
   if (err) {
-    console.log(chalk.red('[Error] URL=', page.url, '\n'), err)
+    logger.error(`[Error] URL=${page.url}\n`, err)
     return
   }
-  console.log(`[请求完成] *${page.marker.type}`, page.url)
+  logger.success(`[请求完成] *${page.marker.type}`, page.url)
   if (page.marker.type === 'list' && $) {
     $('.entry-title a[rel="bookmark"]').each(function(index, el) {
       c.add(createPage('detail', el.attribs.href))
@@ -29,9 +29,11 @@ c.callback((err, { html, $, page }) => {
     if (nextPageBtn) {
       c.add(createPage('list', nextPageBtn.attribs.href))
     }
-  } else if (page.marker.type === 'detail' && html) {
+  } else if (page.marker.type === 'detail' && raw) {
     const url = URL.parse(page.url)
-    fsp.writeFile(path.join(baseDir, url.pathname!), html)
+    const filepath = path.join(baseDir, url.pathname!)
+    fsp.writeFile(filepath, raw)
+    logger.success(`[写入完成]`, filepath)
   }
 })
 

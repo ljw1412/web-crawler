@@ -1,4 +1,4 @@
-import { Crawler, Page } from '../src/index'
+import { Crawler, Page, logger } from '../src/index'
 import chalk from 'chalk'
 import path from 'path'
 import fs from 'fs'
@@ -10,13 +10,13 @@ fsp.mkdir(baseDir, { recursive: true })
 
 const c = new Crawler({ concurrency: 10 })
 
-c.callback((err, { text, page }) => {
+c.callback((err, { raw, page }) => {
   if (err) {
-    console.log(chalk.red('[Error] URL=', page.url, '\n'), err)
+    logger.error(`[Error] URL=${page.url}\n`, err)
     return
   }
-  console.log('[请求完成]', page.url)
-  fsp.writeFile(path.join(baseDir, page.marker.index + '.json'), text)
+  logger.success('[请求完成]', page.url)
+  fsp.writeFile(path.join(baseDir, page.marker.index + '.json'), raw)
 })
 
 for (let i = 1; i < 54100; i++) {
