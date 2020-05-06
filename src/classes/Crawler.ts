@@ -3,6 +3,7 @@ import cheerio from 'cheerio'
 import request from 'superagent'
 import Page from './Page'
 import logger from '../utils/logger'
+import { EventEmitter } from 'events'
 
 // 默认数据合并
 function assignData(
@@ -63,6 +64,7 @@ export default class Crawler {
   _timeout!: number
   _filter: WebCrawler.Filter = _ => true
   _callback?: WebCrawler.Callback
+  _emitter: EventEmitter = new EventEmitter()
 
   constructor(options: WebCrawler.CrawlerOptions = {}) {
     let {
@@ -85,6 +87,17 @@ export default class Crawler {
 
   _getPageCallback(page: Page) {
     return page.callback || this._callback || undefinedCallback
+  }
+
+  _getPageCallbackWrapper(page: Page): WebCrawler.Callback {
+    return (err, data) => {
+      if (err) {
+        this._emitter.emit('error', err)
+      } else {
+        this._emitter.emit('data', data)
+      }
+      this._getPageCallback(page)(err, data)
+    }
   }
 
   timeout(timeout: number) {
