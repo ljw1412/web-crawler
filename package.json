@@ -1,19 +1,18 @@
 {
   "name": "@ljw1412/web-crawler",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "基于Node.js的网络爬虫",
   "main": "./lib/index.js",
-  "types": "./index.d.ts",
+  "types": "./types/index.d.ts",
   "files": [
     "lib",
     "src",
-    "index.d.ts"
+    "types"
   ],
   "scripts": {
-    "clean": "rimraf ./lib ./.temp",
+    "clean": "rimraf ./lib ./types",
     "start": "ts-node --files -r tsconfig-paths/register project/dmzj.ts",
-    "build": "rimraf ./lib && tsc -p ./tsconfig.production.json",
-    "build:dev": "rimraf ./.temp && tsc -p ./tsconfig.dev.json",
+    "build": "rimraf ./lib ./types && tsc -p ./tsconfig.production.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

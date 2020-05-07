@@ -1,5 +1,6 @@
-import Crawler from './classes/Crawler'
-import Page from './classes/Page'
+import Crawler from './Crawler'
+import Page from './Page'
 import logger from './utils/logger'
+import { version } from './base'
 
-export { Crawler, Page, logger }
+export { version, Crawler, Page, logger }

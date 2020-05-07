@@ -1,78 +1,23 @@
-import fastq from 'fastq'
-import cheerio from 'cheerio'
-import request from 'superagent'
 import Page from './Page'
-import logger from '../utils/logger'
+import logger from './utils/logger'
+import { noop, defaultWorker, undefinedCallback } from './default'
+import { RequestWorker, Callback, Filter, Queue, CrawlerOptions } from './base'
+import fastq from 'fastq'
 import { EventEmitter } from 'events'
 
-function noop() {}
-
-// 默认数据合并
-function assignData(
-  data: WebCrawler.CallbackData,
-  type: string,
-  resp: request.Response
-) {
-  switch (type) {
-    case 'html':
-      data.raw = resp.text
-      data.$ = cheerio.load(data.raw)
-      break
-    case 'json':
-      data.raw = resp.text
-      try {
-        data.json = JSON.parse(data.raw)
-      } catch (err) {
-        logger.error('[JSON解析错误]', data.page.url, '\n', err)
-      }
-      break
-    case 'image':
-      break
-  }
-}
-
-// 默认网络请求处理
-const defaultWorker: WebCrawler.RequestWorker = async function(
-  page: Page,
-  done: WebCrawler.Callback
-) {
-  const { type, url, timeout } = page
-  const data: WebCrawler.CallbackData = { raw: '', page }
-  let error = null
-
-  try {
-    logger.info('[发起请求]', url)
-    const resp = await request.get(url).timeout(timeout!)
-    assignData(data, type, resp)
-  } catch (err) {
-    error = err
-    logger.error('[请求错误]', url, '\n', err)
-  }
-
-  done(error, data)
-}
-
-// 未定义回调的错误提示
-function undefinedCallback(
-  err: Error | null,
-  { page }: WebCrawler.CallbackData
-) {
-  logger.error('[回调错误]', '没有进行回调处理:\n', page)
-}
-
 export default class Crawler {
-  _queue!: WebCrawler.Queue
-  _concurrency!: number
-  _timeout!: number
-  _filter: WebCrawler.Filter = _ => true
-  _callback?: WebCrawler.Callback
-  _emitter: EventEmitter = new EventEmitter()
-  _eventTypeCount: number = 0
+  private _queue!: Queue
+  private _concurrency!: number
+  private _timeout!: number
+  private _filter: Filter = _ => true
+  private _callback?: Callback
+  private _emitter: EventEmitter = new EventEmitter()
+  private _eventTypeCount: number = 0
 
-  constructor(options: WebCrawler.CrawlerOptions = {}) {
+  constructor(options: CrawlerOptions = {}) {
     let {
       concurrency = 1,
-      worker = defaultWorker,
+      worker = defaultWorker(),
       timeout = 20 * 1000,
       callback
     } = options
@@ -83,7 +28,8 @@ export default class Crawler {
     this._initQueue(worker, concurrency)
   }
 
-  _initQueue(worker: WebCrawler.RequestWorker, concurrency: number) {
+  // 初始化队列
+  _initQueue(worker: RequestWorker, concurrency: number) {
     this._queue = fastq(this, worker, concurrency)
     this.pause()
   }
@@ -96,7 +42,7 @@ export default class Crawler {
     )
   }
 
-  _getPageCallbackWrapper(page: Page): WebCrawler.Callback {
+  _getPageCallbackWrapper(page: Page): Callback {
     return (err, data) => {
       if (err) {
         this._emitter.emit('error', err)
@@ -128,12 +74,12 @@ export default class Crawler {
     return this
   }
 
-  callback(callback: WebCrawler.Callback) {
+  callback(callback: Callback) {
     this._callback = callback
     return this
   }
 
-  filter(filter: WebCrawler.Filter) {
+  filter(filter: Filter) {
     this._filter = filter
     return this
   }

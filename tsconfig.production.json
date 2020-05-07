@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "rootDir": "./src",
     "outDir": "lib",
+    "rootDir": "./src",
+    "declarationDir": "types",
+    "declaration": true,
     "sourceMap": false,
     "target": "esnext",
     "module": "CommonJS",
