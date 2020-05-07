@@ -9,12 +9,12 @@
   - [x] 可以并发爬取
   - [x] 自由处理返回数据
   - [x] 允许自定义使用网络库(默认使用`superagent`)
-  - [ ] 代理
+  - [ ] 请求代理
   - [ ] 自定义请求头
   - 其他功能构思中……
 
 ## 安装
-```
+```sh
 # 使用 npm
 npm install @ljw1412/web-crawler
 # 使用 yarn
@@ -70,7 +70,7 @@ c.start()
 
 除了使用`callback`进行结果回调处理外你还可以使用`on`,`off`进行事件处理。
 
-event:
+- event:
   - data
   - data.{type}
   - data#{tag}
@@ -109,13 +109,13 @@ c.on('data#no-money', ({ page, raw, $ }) => {
 
 // 监听所有的错误
 c.on('error', error => {
-  logger.error('错误', page.url, error)
+  logger.error('[error]', page.url, error)
 })
 
 c.start()
 ```
 
-## 自定义work，并使用其他网络库
+## 自定义worker，并使用其他网络库
 ```javascript
 const axios = require('axios')
 const cheerio = require('cheerio')
