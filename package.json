@@ -1,7 +1,13 @@
 {
   "name": "@ljw1412/web-crawler",
-  "version": "0.0.3",
+  "version": "0.0.7",
   "description": "基于Node.js的网络爬虫",
+  "keywords": [
+    "crawler",
+    "spider",
+    "web-crawler",
+    "node-crawler"
+  ],
   "main": "./lib/index.js",
   "types": "./types/index.d.ts",
   "files": [
@@ -11,7 +17,7 @@
   ],
   "scripts": {
     "clean": "rimraf ./lib ./types",
-    "start": "ts-node --files -r tsconfig-paths/register project/dmzj.ts",
+    "start": "ts-node --files -r tsconfig-paths/register project/index.ts",
     "build": "rimraf ./lib ./types && tsc -p ./tsconfig.production.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -26,6 +32,8 @@
   },
   "homepage": "https://github.com/ljw1412/web-crawler#readme",
   "dependencies": {
+    "@types/cheerio": "^0.22.18",
+    "@types/superagent": "^4.1.7",
     "chalk": "^4.0.0",
     "cheerio": "^1.0.0-rc.3",
     "fastq": "^1.7.0",
@@ -33,8 +41,6 @@
     "superagent-proxy": "^2.0.0"
   },
   "devDependencies": {
-    "@types/cheerio": "^0.22.18",
-    "@types/superagent": "^4.1.7",
     "rimraf": "^3.0.2",
     "ts-node": "^8.9.1",
     "tsconfig-paths": "^3.9.0",
