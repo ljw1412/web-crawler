@@ -1,5 +1,5 @@
 import Page from './Page';
-import { RequestWorker, Callback, Filter, CrawlerOptions } from './base';
+import { RequestWorker, Callback, Filter, CrawlerOptions, Listener } from './base';
 export default class Crawler {
     private _queue;
     private _concurrency;
@@ -12,7 +12,7 @@ export default class Crawler {
     _initQueue(worker: RequestWorker, concurrency: number): void;
     _getPageCallback(page: Page): Callback;
     _getPageCallbackWrapper(page: Page): Callback;
-    on(event: string | symbol, listener: (...args: any[]) => void): this;
+    on<T extends string | symbol>(event: T, listener: Listener<T>): this;
     off(event: string | symbol, listener: (...args: any[]) => void): this;
     timeout(timeout: number): this;
     callback(callback: Callback): this;

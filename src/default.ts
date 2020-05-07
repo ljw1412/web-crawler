@@ -26,6 +26,7 @@ export function defaultAssignData(
       }
       break
     case 'image':
+      data.buffer = resp.body
       break
   }
 }
@@ -44,7 +45,7 @@ export const defaultWorker = (
     assignData(data, type, resp)
   } catch (err) {
     error = err
-    logger.error('[请求错误]', url, '\n', err)
+    logger.error(`[请求错误] ${error.message}`, url)
   }
 
   done(error, data)

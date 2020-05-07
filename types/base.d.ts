@@ -1,4 +1,5 @@
 /// <reference types="cheerio" />
+/// <reference types="node" />
 import fastq from 'fastq';
 import Page from './Page';
 import Crawler from './Crawler';
@@ -7,12 +8,14 @@ export interface CallbackData {
     page: Page;
     $?: CheerioSelector;
     json?: Record<string, any> | null;
+    buffer?: Buffer;
     [key: string]: any;
 }
 export declare type Callback = (err: Error | null, data: CallbackData) => void;
 export declare type Filter = (page: Page) => boolean;
 export declare type Queue = fastq.queue;
 export declare type RequestWorker = fastq.worker<Crawler>;
+export declare type Listener<T> = T extends 'error' ? (error: Error, data: CallbackData) => void : (data: CallbackData) => void;
 interface BaseOptions {
     timeout?: number;
     callback?: Callback;

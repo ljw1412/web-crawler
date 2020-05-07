@@ -1,7 +1,14 @@
 import Page from './Page'
 import logger from './utils/logger'
 import { noop, defaultWorker, undefinedCallback } from './default'
-import { RequestWorker, Callback, Filter, Queue, CrawlerOptions } from './base'
+import {
+  RequestWorker,
+  Callback,
+  Filter,
+  Queue,
+  CrawlerOptions,
+  Listener
+} from './base'
 import fastq from 'fastq'
 import { EventEmitter } from 'events'
 
@@ -45,7 +52,7 @@ export default class Crawler {
   _getPageCallbackWrapper(page: Page): Callback {
     return (err, data) => {
       if (err) {
-        this._emitter.emit('error', err)
+        this._emitter.emit('error', err, data)
       } else {
         this._emitter.emit('data', data)
         this._emitter.emit(`data.${page.type}`, data)
@@ -57,7 +64,7 @@ export default class Crawler {
     }
   }
 
-  on(event: string | symbol, listener: (...args: any[]) => void) {
+  on<T extends string | symbol>(event: T, listener: Listener<T>) {
     this._emitter.on(event, listener)
     this._eventTypeCount = this._emitter.eventNames().length
     return this
