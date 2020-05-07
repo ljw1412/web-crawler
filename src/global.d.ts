@@ -33,6 +33,7 @@ declare global {
     interface PageOptions extends BaseOptions {
       type: string
       url: string
+      tag?: string
       marker?: Record<string, any>
     }
   }

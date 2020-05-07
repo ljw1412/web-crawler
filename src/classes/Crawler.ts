@@ -5,6 +5,8 @@ import Page from './Page'
 import logger from '../utils/logger'
 import { EventEmitter } from 'events'
 
+function noop() {}
+
 // 默认数据合并
 function assignData(
   data: WebCrawler.CallbackData,
@@ -65,6 +67,7 @@ export default class Crawler {
   _filter: WebCrawler.Filter = _ => true
   _callback?: WebCrawler.Callback
   _emitter: EventEmitter = new EventEmitter()
+  _eventTypeCount: number = 0
 
   constructor(options: WebCrawler.CrawlerOptions = {}) {
     let {
@@ -86,7 +89,11 @@ export default class Crawler {
   }
 
   _getPageCallback(page: Page) {
-    return page.callback || this._callback || undefinedCallback
+    return (
+      page.callback ||
+      this._callback ||
+      (this._eventTypeCount ? noop : undefinedCallback)
+    )
   }
 
   _getPageCallbackWrapper(page: Page): WebCrawler.Callback {
@@ -95,9 +102,25 @@ export default class Crawler {
         this._emitter.emit('error', err)
       } else {
         this._emitter.emit('data', data)
+        this._emitter.emit(`data.${page.type}`, data)
+        if (page.tag) {
+          this._emitter.emit(`data#${page.tag}`, data)
+        }
       }
       this._getPageCallback(page)(err, data)
     }
+  }
+
+  on(event: string | symbol, listener: (...args: any[]) => void) {
+    this._emitter.on(event, listener)
+    this._eventTypeCount = this._emitter.eventNames().length
+    return this
+  }
+
+  off(event: string | symbol, listener: (...args: any[]) => void) {
+    this._emitter.off(event, listener)
+    this._eventTypeCount = this._emitter.eventNames().length
+    return this
   }
 
   timeout(timeout: number) {
@@ -120,7 +143,7 @@ export default class Crawler {
     pages = pages.filter(this._filter)
     pages.forEach(page => {
       if (!page.timeout) page.timeout = this._timeout
-      this._queue.push(page, this._getPageCallback(page))
+      this._queue.push(page, this._getPageCallbackWrapper(page))
     })
     return this
   }

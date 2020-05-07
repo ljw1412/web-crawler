@@ -1,5 +1,4 @@
 import { Crawler, Page, logger } from '../src/index'
-import chalk from 'chalk'
 import path from 'path'
 import fs from 'fs'
 const fsp = fs.promises

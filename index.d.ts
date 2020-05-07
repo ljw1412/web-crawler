@@ -37,20 +37,17 @@ declare namespace WebCrawler {
     type: string
     url: string
     marker: Record<string, any>
+    tag?: string
     callback?: Callback
     timeout?: number
     constructor(options: PageOptions)
   }
 
   class Crawler {
-    _queue: Queue
-    _concurrency: number
-    _timeout: number
-    _filter: Filter
-    _callback?: Callback
     constructor(options?: CrawlerOptions)
-    _initQueue(worker: RequestWorker, concurrency: number): void
-    _getPageCallback(page: Page): Callback
+    on(event: 'error', listener: (error: Error) => void): this
+    on(event: string | symbol, listener: (data: CallbackData) => void): this
+    off(event: string | symbol, listener: (args: any) => void): this
     timeout(timeout: number): this
     callback(callback: Callback): this
     filter(filter: Filter): this
