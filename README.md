@@ -132,7 +132,9 @@ const worker = async (page, done) => {
   let error = null
   try {
     logger.info('[发起请求]', url)
-    const resp = await axios.get(url, { timeout, headers })
+    const options = { timeout, headers }
+    if (type === 'image') options.responseType = 'arraybuffer'
+    const resp = await axios.get(url, options)
     data.raw = resp.data
     // 根据类型新增data内的属性
     switch (type) {
@@ -146,6 +148,8 @@ const worker = async (page, done) => {
           logger.error('[JSON解析错误]', data.page.url, '\n', err)
         }
         break
+      case 'image':
+        data.buffer = resp.data
     }
   } catch (err) {
     error = err
