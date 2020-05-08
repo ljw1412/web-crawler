@@ -127,7 +127,7 @@ const { Crawler, Page, logger, headers } = require('@ljw1412/web-crawler')
 // done 是一个完成方法，对应用户设置的 callback
 // done(error, data)
 const worker = async (page, done) => {
-  const { type, url, timeout } = page
+  const { type, url, timeout, headers } = page
   const data = { raw: '', page }
   let error = null
   try {
@@ -168,4 +168,28 @@ c.callback((err, { page, raw, $ }) => {
 })
 
 c.start()
+```
+
+## 自定义请求头
+```javascript
+const c = new Crawler({
+  concurrency: 5,
+  // 设置默认的请求头，所有被添加的Page都会使用。
+  headers: {
+    'User-Agent':
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
+  }
+})
+
+const page = new Page({
+  type: 'image',
+  url: 'XXX',
+  // 设置页面特有的请求头，将与默认请求头进行合并。
+  // 优先级高于默认请求头(即同名属性将覆盖默认请求头)。
+  headers: {
+    'User-Agent':
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10; rv:33.0) Gecko/20100101 Firefox/33.0',
+    Referer: 'https://localhost'
+  }
+})
 ```
