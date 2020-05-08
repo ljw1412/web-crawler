@@ -12,6 +12,7 @@
   - [x] 自由处理返回数据
   - [x] 允许自定义使用网络库(默认使用`superagent`)
   - [x] 自定义请求头
+  - [ ] 更多请求方法
   - [ ] 请求代理
   - [ ] 动态页面的数据爬取
   - 其他功能构思中……
@@ -122,7 +123,7 @@ c.start()
 ```javascript
 const axios = require('axios')
 const cheerio = require('cheerio')
-const { Crawler, Page, logger, headers } = require('@ljw1412/web-crawler')
+const { Crawler, Page, logger } = require('@ljw1412/web-crawler')
 
 // done 是一个完成方法，对应用户设置的 callback
 // done(error, data)
