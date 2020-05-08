@@ -1,36 +1,32 @@
 import { Crawler, Page, logger } from '../src/index'
-import { CallbackData } from 'src/base'
+import path from 'path'
+import fs from 'fs'
+const fsp = fs.promises
 
-function createPage(tag: 'list' | 'detail', url: string) {
-  return new Page({ type: 'html', tag, url })
-}
+const baseDir = path.join(__dirname, '../output/images')
 
-// { concurrency: 5 }
+fsp.mkdir(baseDir, { recursive: true })
+
 const c = new Crawler()
 
-c.on('data', ({ page, $ }: CallbackData) => {
-  logger.success('data', page.url)
-  if (page.tag === 'list' && $) {
-    $('.entry-title a[rel="bookmark"]').each(function(index, el) {
-      c.add(createPage('detail', el.attribs.href))
-    })
-    const nextPageBtn = $('.next.page-numbers').get(0)
-    if (nextPageBtn) {
-      c.add(createPage('list', nextPageBtn.attribs.href))
-    }
+c.on('data.image', ({ page, buffer }) => {
+  if (buffer) {
+    fsp.writeFile(path.join(baseDir, 'cover.jpg'), buffer)
+    logger.success('[保存成功]', page.url)
   }
 })
-  .on('data.html', ({ page }) => {
-    logger.success('data.html', page.url)
+
+c.on('error', (error, { page }) => {
+  // console.log(error)
+})
+
+c.add(
+  new Page({
+    type: 'image',
+    url:
+      'https://images.dmzj.com/b/%E6%9C%AC%E5%91%A8%E7%8B%97%E7%B2%AE%E6%8E%A8%E8%8D%90/%E7%AC%AC28%E8%AF%9D_1588907457/001.jpg',
+    headers: { Referer: 'https://www.dmzj.com' }
   })
-  .on('data#list', ({ page }) => {
-    logger.success('data#list', page.url)
-  })
-  .on('data#detail', ({ page }) => {
-    logger.success('data#detail', page.url)
-  })
-  .on('error', ({ page }) => {
-    logger.error('error', page.url)
-  })
-  .add(createPage('list', 'http://qinqinghe.com/category/jingdian/'))
-  .start()
+)
+
+c.start()

@@ -1,4 +1,4 @@
-import { Callback, PageOptions } from './base';
+import { Callback, PageOptions, RequsetHeaders } from './base';
 export default class Page {
     type: string;
     url: string;
@@ -6,5 +6,6 @@ export default class Page {
     tag?: string;
     callback?: Callback;
     timeout?: number;
+    headers: RequsetHeaders;
     constructor(options: PageOptions);
 }

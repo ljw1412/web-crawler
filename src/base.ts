@@ -23,8 +23,17 @@ export type Listener<T> = T extends 'error'
   ? (error: Error, data: CallbackData) => void
   : (data: CallbackData) => void
 
+export interface RequsetHeaders {
+  Referer?: string
+  Cookie?: string
+  Origin?: string
+  'User-Agent'?: string
+  [k: string]: any
+}
+
 interface BaseOptions {
   timeout?: number
+  headers?: RequsetHeaders
   callback?: Callback
 }
 
@@ -34,7 +43,7 @@ export interface CrawlerOptions extends BaseOptions {
 }
 
 export interface PageOptions extends BaseOptions {
-  type: string
+  type: 'html' | 'image' | 'json' | string
   url: string
   tag?: string
   marker?: Record<string, any>

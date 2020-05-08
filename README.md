@@ -1,5 +1,7 @@
 # @ljw1412/web-crawler
 
+[![npm version](https://img.shields.io/npm/v/@ljw1412/web-crawler?style=flat-square)](https://www.npmjs.com/package/@ljw1412/web-crawler)
+
 这是一个爬虫库(一时兴起写的)。
 
 顺便学习`Typescript` 、以及对项目架构的思考。
@@ -9,8 +11,8 @@
   - [x] 可以并发爬取
   - [x] 自由处理返回数据
   - [x] 允许自定义使用网络库(默认使用`superagent`)
+  - [x] 自定义请求头
   - [ ] 请求代理
-  - [ ] 自定义请求头
   - [ ] 动态页面的数据爬取
   - 其他功能构思中……
 
@@ -120,7 +122,7 @@ c.start()
 ```javascript
 const axios = require('axios')
 const cheerio = require('cheerio')
-const { Crawler, Page, logger } = require('@ljw1412/web-crawler')
+const { Crawler, Page, logger, headers } = require('@ljw1412/web-crawler')
 
 // done 是一个完成方法，对应用户设置的 callback
 // done(error, data)
@@ -130,7 +132,7 @@ const worker = async (page, done) => {
   let error = null
   try {
     logger.info('[发起请求]', url)
-    const resp = await axios.get(url, { timeout })
+    const resp = await axios.get(url, { timeout, headers })
     data.raw = resp.data
     // 根据类型新增data内的属性
     switch (type) {

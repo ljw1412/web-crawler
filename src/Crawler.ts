@@ -7,7 +7,8 @@ import {
   Filter,
   Queue,
   CrawlerOptions,
-  Listener
+  Listener,
+  RequsetHeaders
 } from './base'
 import fastq from 'fastq'
 import { EventEmitter } from 'events'
@@ -16,6 +17,7 @@ export default class Crawler {
   private _queue!: Queue
   private _concurrency!: number
   private _timeout!: number
+  private _headers!: RequsetHeaders
   private _filter: Filter = _ => true
   private _callback?: Callback
   private _emitter: EventEmitter = new EventEmitter()
@@ -26,11 +28,13 @@ export default class Crawler {
       concurrency = 1,
       worker = defaultWorker(),
       timeout = 20 * 1000,
+      headers = {},
       callback
     } = options
 
     this._concurrency = concurrency
     this._timeout = timeout
+    this._headers = headers
     this._callback = callback
     this._initQueue(worker, concurrency)
   }
@@ -96,6 +100,7 @@ export default class Crawler {
     pages = pages.filter(this._filter)
     pages.forEach(page => {
       if (!page.timeout) page.timeout = this._timeout
+      page.headers = Object.assign({}, this._headers, page.headers)
       this._queue.push(page, this._getPageCallbackWrapper(page))
     })
     return this

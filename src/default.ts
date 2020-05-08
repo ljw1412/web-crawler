@@ -35,13 +35,19 @@ export function defaultAssignData(
 export const defaultWorker = (
   assignData: typeof defaultAssignData = defaultAssignData
 ) => async (page: Page, done: Callback) => {
-  const { type, url, timeout } = page
+  const { type, url, timeout, headers } = page
+
   const data: CallbackData = { raw: '', page }
   let error = null
 
   try {
     logger.info('[发起请求]', url)
-    const resp = await request.get(url).timeout(timeout!)
+
+    const resp = await request
+      .get(url)
+      .timeout(timeout!)
+      .set(headers)
+
     assignData(data, type, resp)
   } catch (err) {
     error = err

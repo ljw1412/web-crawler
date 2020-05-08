@@ -4,6 +4,7 @@ export default class Crawler {
     private _queue;
     private _concurrency;
     private _timeout;
+    private _headers;
     private _filter;
     private _callback?;
     private _emitter;
