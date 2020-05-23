@@ -14,8 +14,11 @@
     "esModuleInterop": true,
     "removeComments": false,
     "lib": ["esnext", "dom"],
-    "typeRoots": ["node_modules/@types"]
+    "typeRoots": ["node_modules/@types"],
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["src/**/*.ts", "project/**/*.ts"],
+  "include": ["src/**/*.ts", "project/**/*.ts", "tests/**/*.ts"],
   "exclude": ["node_modules"]
 }

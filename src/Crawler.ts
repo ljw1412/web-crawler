@@ -1,5 +1,4 @@
 import Page from './Page'
-import logger from './utils/logger'
 import { noop, defaultWorker, undefinedCallback } from './default'
 import {
   RequestWorker,

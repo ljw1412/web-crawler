@@ -19,7 +19,8 @@
     "clean": "rimraf ./lib ./types",
     "start": "ts-node --files -r tsconfig-paths/register project/index.ts",
     "build": "rimraf ./lib ./types && tsc -p ./tsconfig.production.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -r ts-node/register -r tsconfig-paths/register 'tests/**/*.{ts,tsx}'",
+    "test:watch": "mocha -r ts-node/register -r tsconfig-paths/register --extensions ts,tsx --watch --watch-files src 'tests/**/*.{ts,tsx}'"
   },
   "repository": {
     "type": "git",
@@ -33,14 +34,18 @@
   "homepage": "https://github.com/ljw1412/web-crawler#readme",
   "dependencies": {
     "@types/cheerio": "^0.22.18",
+    "@types/puppeteer": "^3.0.0",
     "@types/superagent": "^4.1.7",
     "chalk": "^4.0.0",
     "cheerio": "^1.0.0-rc.3",
     "fastq": "^1.7.0",
+    "puppeteer": "^3.1.0",
     "superagent": "^5.2.2",
     "superagent-proxy": "^2.0.0"
   },
   "devDependencies": {
+    "@types/mocha": "^7.0.2",
+    "mocha": "^7.1.2",
     "rimraf": "^3.0.2",
     "ts-node": "^8.9.1",
     "tsconfig-paths": "^3.9.0",
