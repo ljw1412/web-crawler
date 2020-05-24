@@ -6,12 +6,8 @@ import logger from './utils/logger'
 
 export function noop() {}
 
-// 默认结果数据组装
-export function defaultAssignData(
-  data: CallbackData,
-  type: string,
-  resp: Response
-) {
+// superagent结果数据组装
+export function assignData(data: CallbackData, type: string, resp: Response) {
   switch (type) {
     case 'html':
       data.raw = resp.text
@@ -26,29 +22,37 @@ export function defaultAssignData(
       }
       break
     case 'image':
+    case 'file':
       data.buffer = resp.body
       break
   }
 }
 
+function getSourceCode(page: Page) {
+  return page.crawler.browser.getSourceCode(page.url)
+}
+
 // 默认网络请求处理
-export const defaultWorker = (
-  assignData: typeof defaultAssignData = defaultAssignData
-) => async (page: Page, done: Callback) => {
-  const { type, url, timeout, headers } = page
+export const defaultWorker = async (page: Page, done: Callback) => {
+  const { type, url, timeout, headers, javascript } = page
 
   const data: CallbackData = { raw: '', page }
   let error = null
 
   try {
     logger.info('[发起请求]', url)
+    if (javascript) {
+      const content = await getSourceCode(page)
+      data.raw = content
+      data.$ = cheerio.load(data.raw)
+    } else {
+      const resp = await request
+        .get(url)
+        .timeout(timeout!)
+        .set(headers)
 
-    const resp = await request
-      .get(url)
-      .timeout(timeout!)
-      .set(headers)
-
-    assignData(data, type, resp)
+      assignData(data, type, resp)
+    }
   } catch (err) {
     error = err
     logger.error(`[请求错误] ${error.message}`, url)

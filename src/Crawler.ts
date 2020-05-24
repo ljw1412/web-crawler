@@ -1,4 +1,5 @@
 import Page from './Page'
+import Browser from './Browser'
 import { noop, defaultWorker, undefinedCallback } from './default'
 import {
   RequestWorker,
@@ -21,11 +22,13 @@ export default class Crawler {
   private _callback?: Callback
   private _emitter: EventEmitter = new EventEmitter()
   private _eventTypeCount: number = 0
+  private _checkEmptyTimer!: NodeJS.Timer
+  browser = new Browser()
 
   constructor(options: CrawlerOptions = {}) {
     let {
       concurrency = 1,
-      worker = defaultWorker(),
+      worker = defaultWorker,
       timeout = 20 * 1000,
       headers = {},
       callback
@@ -38,12 +41,24 @@ export default class Crawler {
     this._initQueue(worker, concurrency)
   }
 
+  // 空状态检查
+  _initCheckTimer() {
+    clearTimeout(this._checkEmptyTimer)
+    this._checkEmptyTimer = setTimeout(() => {
+      if (this._queue.empty && this.browser._launching) {
+        this.browser.destroy()
+        clearTimeout(this._checkEmptyTimer)
+      }
+    }, 3000)
+  }
+
   // 初始化队列
   _initQueue(worker: RequestWorker, concurrency: number) {
     this._queue = fastq(this, worker, concurrency)
     this.pause()
   }
 
+  // 页面回调
   _getPageCallback(page: Page) {
     return (
       page.callback ||
@@ -52,6 +67,7 @@ export default class Crawler {
     )
   }
 
+  // 页面回调封装emit事件
   _getPageCallbackWrapper(page: Page): Callback {
     return (err, data) => {
       if (err) {
@@ -98,10 +114,12 @@ export default class Crawler {
     let pages = Array.isArray(page) ? page : [page]
     pages = pages.filter(this._filter)
     pages.forEach(page => {
+      page.crawler = this
       if (!page.timeout) page.timeout = this._timeout
       page.headers = Object.assign({}, this._headers, page.headers)
       this._queue.push(page, this._getPageCallbackWrapper(page))
     })
+    this._initCheckTimer()
     return this
   }
 

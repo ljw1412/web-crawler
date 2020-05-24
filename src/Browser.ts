@@ -2,14 +2,19 @@ import puppeteer, { LaunchOptions } from 'puppeteer'
 
 export default class Browser {
   _browser!: puppeteer.Browser
+  _launching = false
 
   constructor() {}
 
   async init(config: LaunchOptions = {}) {
     this._browser = await puppeteer.launch(config)
+    this._launching = true
   }
 
   async getSourceCode(url: string) {
+    if (!this._launching) {
+      await this.init()
+    }
     const page = await this._browser.newPage()
     await page.goto(url)
     const content = await page.content()
@@ -18,6 +23,8 @@ export default class Browser {
   }
 
   async destroy() {
-    return await this._browser.close()
+    await this._browser.close()
+    this._launching = false
+    return
   }
 }

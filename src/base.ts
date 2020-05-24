@@ -43,8 +43,9 @@ export interface CrawlerOptions extends BaseOptions {
 }
 
 export interface PageOptions extends BaseOptions {
-  type: 'html' | 'image' | 'json' | string
+  type: 'html' | 'image' | 'file' | 'json' | string
   url: string
+  javascript?: boolean
   tag?: string
   marker?: Record<string, any>
 }
