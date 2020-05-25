@@ -198,3 +198,32 @@ const page = new Page({
   }
 })
 ```
+
+## 动态页面爬取
+
+现在很多页面都是用了`SPA`(如：react、vue等)。此时使用普通请求的方式去获取页面数据，会出现页面节点未渲染的情况。
+
+此时你可以将Page的javascript设置为`true`，此时该请求将会以无头浏览器的模式去加载页面（因为会执行页面脚本代码因此性能会有所下降）。
+
+```js
+import { Crawler, Page, logger } from '../src/index'
+
+const c = new Crawler()
+
+c.add(
+  new Page({
+    type: 'html',
+    url: 'https://www.baidu.com',
+    javascript: true,
+    callback: (err, { page, raw, $ }) => {
+      if (err) {
+        logger.error(err.message)
+        return
+      }
+      logger.success('[请求成功]', raw)
+    }
+  })
+)
+
+c.start()
+```
