@@ -8,7 +8,8 @@ import {
   Queue,
   CrawlerOptions,
   Listener,
-  RequsetHeaders
+  RequsetHeaders,
+  PageOptions
 } from './base'
 import fastq from 'fastq'
 import { EventEmitter } from 'events'
@@ -22,7 +23,7 @@ export default class Crawler {
   private _callback?: Callback
   private _emitter: EventEmitter = new EventEmitter()
   private _eventTypeCount: number = 0
-  private _checkEmptyTimer!: NodeJS.Timer
+  private _readyExitTimer!: NodeJS.Timer
   browser!: Browser
 
   constructor(options: CrawlerOptions = {}) {
@@ -43,13 +44,13 @@ export default class Crawler {
     this.browser = new Browser(browerConfig)
   }
 
-  // 空状态检查
-  _initCheckTimer() {
-    clearTimeout(this._checkEmptyTimer)
-    this._checkEmptyTimer = setTimeout(() => {
-      if (this._queue.empty && this.browser._launching) {
+  // 更新准备退出的计时器
+  _updateReadyExitTimer() {
+    clearTimeout(this._readyExitTimer)
+    this._readyExitTimer = setTimeout(() => {
+      if (this.browser._launching) {
         this.browser.destroy()
-        clearTimeout(this._checkEmptyTimer)
+        clearTimeout(this._readyExitTimer)
       }
     }, 3000)
   }
@@ -57,6 +58,7 @@ export default class Crawler {
   // 初始化队列
   _initQueue(worker: RequestWorker, concurrency: number) {
     this._queue = fastq(this, worker, concurrency)
+    this._queue.empty = this._updateReadyExitTimer.bind(this)
     this.pause()
   }
 
@@ -121,8 +123,12 @@ export default class Crawler {
       page.headers = Object.assign({}, this._headers, page.headers)
       this._queue.push(page, this._getPageCallbackWrapper(page))
     })
-    this._initCheckTimer()
     return this
+  }
+
+  addPage(page: PageOptions | PageOptions[]) {
+    let pages = Array.isArray(page) ? page : [page]
+    this.add(pages.map(options => new Page(options)))
   }
 
   start() {
@@ -133,7 +139,7 @@ export default class Crawler {
     this._queue.pause()
   }
 
-  stop(drain: boolean) {
-    return drain ? this._queue.killAndDrain() : this._queue.kill()
+  stop() {
+    return this._queue.kill()
   }
 }
