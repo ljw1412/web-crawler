@@ -123,6 +123,7 @@ export default class Crawler {
       page.headers = Object.assign({}, this._headers, page.headers)
       this._queue.push(page, this._getPageCallbackWrapper(page))
     })
+    clearTimeout(this._readyExitTimer)
     return this
   }
 
