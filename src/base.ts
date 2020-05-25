@@ -1,6 +1,7 @@
 import fastq from 'fastq'
 import Page from './Page'
 import Crawler from './Crawler'
+import { LaunchOptions } from 'puppeteer'
 
 export interface CallbackData {
   raw: string
@@ -40,6 +41,7 @@ interface BaseOptions {
 export interface CrawlerOptions extends BaseOptions {
   concurrency?: number
   worker?: RequestWorker
+  browerConfig?: LaunchOptions
 }
 
 export interface PageOptions extends BaseOptions {

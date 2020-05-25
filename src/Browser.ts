@@ -3,11 +3,14 @@ import puppeteer, { LaunchOptions } from 'puppeteer'
 export default class Browser {
   _browser!: puppeteer.Browser
   _launching = false
+  config!: LaunchOptions
 
-  constructor() {}
+  constructor(config: LaunchOptions = {}) {
+    this.config = config
+  }
 
-  async init(config: LaunchOptions = {}) {
-    this._browser = await puppeteer.launch(config)
+  async init() {
+    this._browser = await puppeteer.launch(this.config)
     this._launching = true
   }
 

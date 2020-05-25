@@ -23,7 +23,7 @@ export default class Crawler {
   private _emitter: EventEmitter = new EventEmitter()
   private _eventTypeCount: number = 0
   private _checkEmptyTimer!: NodeJS.Timer
-  browser = new Browser()
+  browser!: Browser
 
   constructor(options: CrawlerOptions = {}) {
     let {
@@ -31,6 +31,7 @@ export default class Crawler {
       worker = defaultWorker,
       timeout = 20 * 1000,
       headers = {},
+      browerConfig,
       callback
     } = options
 
@@ -39,6 +40,7 @@ export default class Crawler {
     this._headers = headers
     this._callback = callback
     this._initQueue(worker, concurrency)
+    this.browser = new Browser(browerConfig)
   }
 
   // 空状态检查
