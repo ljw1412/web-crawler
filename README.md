@@ -72,7 +72,7 @@ c.start()
 
 ## 监听绑定
 
-除了使用`callback`进行结果回调处理外你还可以使用`on`,`off`进行事件处理。
+除了使用`callback`进行结果回调处理外你还可以使用`on`/`off`进行事件处理。
 
 - event:
   - data
@@ -201,7 +201,7 @@ const page = new Page({
 
 ## 动态页面爬取
 
-现在很多页面都是用了`SPA`(如：react、vue等)。此时使用普通请求的方式去获取页面数据，会出现页面节点未渲染的情况。
+现在很多页面都是用了`SPA`。此时使用普通请求的方式去获取页面数据，会出现页面节点未渲染的情况。
 
 此时你可以将Page的javascript设置为`true`，此时该请求将会以无头浏览器的模式去加载页面（因为会执行页面脚本代码因此性能会有所下降）。
 
@@ -227,3 +227,77 @@ c.add(
 
 c.start()
 ```
+
+
+## API
+
+### new Page([options])
+
+创建一个页面实例。
+
+参数:
+- options
+  - timeout      超时时间(ms)，默认值 `20 * 1000`。
+  - headers      设置请求头。
+  - callback     请求完成后的回调 `(err, data) => void`。
+  - type         页面类型(`html, image, file, json`或自定义字符串)。
+  - url          页面资源地址。
+  - javascript   是否加载页面的js。
+  - tag          标签，用于回调标记。
+  - marker       自定义标记数据对象。
+
+### new Crawler([options])
+
+创建一个新的爬虫实例。
+
+参数:
+- options 爬虫基础配置(对象的属性均为选填)。
+  - timeout      超时时间(ms)，默认值 `20 * 1000`。
+  - headers      设置请求头
+  - callback     请求完成后的回调 `(err, data) => void`。
+  - concurrency  允许的并发数量
+  - worker       自定义请求方法 `(page, done) => void`，最后使用执行回调`done(err, data)`。
+  - browerConfig 同`puppeteer.launch([options])`中的`options`。
+
+### on(event,listener)
+
+### off(event,listener)
+
+事件绑定/解绑，使用方法见[监听绑定](#监听绑定)。
+
+### timeout(timeout)
+
+设置超时时间，单位毫秒(ms)。但是优先级低于`Page`实例中的`timeout`。
+
+可以在运行时进行修改，对后面添加的页面有效。
+
+### callback((err, data) => void)
+
+设置回调方法，格式同构造函数传参的`options.callback`。但是优先级低于`Page`实例中的`callback`。
+
+可以在运行时进行修改，对后面添加的页面有效。
+
+### filter((page: Page) => boolean)
+
+设置过滤方法。返回值为false将不会加入爬虫队列。可以在运行时进行修改，对后面添加的页面有效。
+
+### add(page) / add(pages)
+
+向队列中添加请求一个或多个页面([`Page`](#API))。
+
+### addPage(pageOptions) / addPage(pagesOptions)
+
+向队列中添加请求一个或多个页面。这里传的是Page参数而不是Page实例。
+
+### start()
+
+开始爬取。
+
+### pause()
+
+暂停爬取。
+
+### stop()
+
+停止爬取。
+

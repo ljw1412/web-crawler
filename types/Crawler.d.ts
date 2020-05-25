@@ -1,6 +1,6 @@
 import Page from './Page';
 import Browser from './Browser';
-import { RequestWorker, Callback, Filter, CrawlerOptions, Listener } from './base';
+import { RequestWorker, Callback, Filter, CrawlerOptions, Listener, PageOptions } from './base';
 export default class Crawler {
     private _queue;
     private _concurrency;
@@ -10,10 +10,10 @@ export default class Crawler {
     private _callback?;
     private _emitter;
     private _eventTypeCount;
-    private _checkEmptyTimer;
+    private _readyExitTimer;
     browser: Browser;
     constructor(options?: CrawlerOptions);
-    _initCheckTimer(): void;
+    _updateReadyExitTimer(): void;
     _initQueue(worker: RequestWorker, concurrency: number): void;
     _getPageCallback(page: Page): Callback;
     _getPageCallbackWrapper(page: Page): Callback;
@@ -23,7 +23,8 @@ export default class Crawler {
     callback(callback: Callback): this;
     filter(filter: Filter): this;
     add(page: Page | Page[]): this;
+    addPage(page: PageOptions | PageOptions[]): void;
     start(): void;
     pause(): void;
-    stop(drain: boolean): any;
+    stop(): any;
 }
