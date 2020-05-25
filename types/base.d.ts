@@ -3,6 +3,7 @@
 import fastq from 'fastq';
 import Page from './Page';
 import Crawler from './Crawler';
+import { LaunchOptions } from 'puppeteer';
 export interface CallbackData {
     raw: string;
     page: Page;
@@ -31,10 +32,12 @@ interface BaseOptions {
 export interface CrawlerOptions extends BaseOptions {
     concurrency?: number;
     worker?: RequestWorker;
+    browerConfig?: LaunchOptions;
 }
 export interface PageOptions extends BaseOptions {
-    type: 'html' | 'image' | 'json' | string;
+    type: 'html' | 'image' | 'file' | 'json' | string;
     url: string;
+    javascript?: boolean;
     tag?: string;
     marker?: Record<string, any>;
 }

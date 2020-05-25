@@ -1,5 +1,7 @@
 import { Callback, PageOptions, RequsetHeaders } from './base';
+import Crawler from './Crawler';
 export default class Page {
+    crawler: Crawler;
     type: string;
     url: string;
     marker: Record<string, any>;
@@ -7,5 +9,6 @@ export default class Page {
     callback?: Callback;
     timeout?: number;
     headers: RequsetHeaders;
+    javascript: boolean;
     constructor(options: PageOptions);
 }

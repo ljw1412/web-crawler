@@ -1,4 +1,5 @@
 import Page from './Page';
+import Browser from './Browser';
 import { RequestWorker, Callback, Filter, CrawlerOptions, Listener } from './base';
 export default class Crawler {
     private _queue;
@@ -9,7 +10,10 @@ export default class Crawler {
     private _callback?;
     private _emitter;
     private _eventTypeCount;
+    private _checkEmptyTimer;
+    browser: Browser;
     constructor(options?: CrawlerOptions);
+    _initCheckTimer(): void;
     _initQueue(worker: RequestWorker, concurrency: number): void;
     _getPageCallback(page: Page): Callback;
     _getPageCallbackWrapper(page: Page): Callback;
