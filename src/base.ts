@@ -34,6 +34,7 @@ export interface RequsetHeaders {
 
 interface BaseOptions {
   timeout?: number
+  proxy?: string
   headers?: RequsetHeaders
   callback?: Callback
 }

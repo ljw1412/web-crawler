@@ -19,6 +19,7 @@ export default class Crawler {
   private _concurrency!: number
   private _timeout!: number
   private _headers!: RequsetHeaders
+  private _proxy!: string
   private _filter: Filter = _ => true
   private _callback?: Callback
   private _emitter: EventEmitter = new EventEmitter()
@@ -33,6 +34,7 @@ export default class Crawler {
       timeout = config.timeout,
       headers = {},
       browerConfig,
+      proxy = '',
       callback
     } = options
 
@@ -42,6 +44,7 @@ export default class Crawler {
       { 'User-Agent': config['User-Agent'] },
       headers
     )
+    this._proxy = proxy
     this._callback = callback
     this._initQueue(worker, concurrency)
     this.browser = new Browser(browerConfig)
@@ -123,6 +126,7 @@ export default class Crawler {
     pages.forEach(page => {
       page.crawler = this
       if (!page.timeout) page.timeout = this._timeout
+      if (!page.proxy) page.proxy = this._proxy
       page.headers = Object.assign({}, this._headers, page.headers)
       this._queue.push(page, this._getPageCallbackWrapper(page))
     })

@@ -10,6 +10,7 @@ export default class Page {
   callback?: Callback
   timeout?: number
   headers!: RequsetHeaders
+  proxy!: string
   // 是否启用javascript(即使用无头浏览器进行页面加载，实现获取动态网页数据)
   javascript!: boolean
 
@@ -22,7 +23,8 @@ export default class Page {
       timeout,
       javascript = false,
       marker = {},
-      headers = {}
+      headers = {},
+      proxy = ''
     } = options
 
     this.type = type
@@ -33,5 +35,6 @@ export default class Page {
     this.timeout = timeout
     this.headers = headers
     this.javascript = javascript
+    this.proxy = proxy
   }
 }

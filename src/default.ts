@@ -4,6 +4,8 @@ import { Callback, CallbackData } from './base'
 import Page from './Page'
 import logger from './utils/logger'
 
+require('superagent-proxy')(request)
+
 export const config = {
   timeout: 20000,
   'User-Agent':
@@ -35,7 +37,7 @@ export function assignData(data: CallbackData, type: string, resp: Response) {
 }
 
 async function getSourceCode(page: Page) {
-  return await page.crawler.browser.getSourceCode(page.url, page.timeout)
+  return await page.crawler.browser.getSourceCode(page)
 }
 
 // 默认网络请求处理
@@ -52,11 +54,12 @@ export const defaultWorker = async (page: Page, done: Callback) => {
       data.raw = content
       data.$ = cheerio.load(data.raw)
     } else {
-      const resp = await request
+      const req = request
         .get(url)
         .timeout(timeout!)
         .set(headers)
-
+      if (page.proxy) req.proxy(page.proxy)
+      const resp = await req
       assignData(data, type, resp)
     }
   } catch (err) {
