@@ -4,6 +4,12 @@ import { Callback, CallbackData } from './base'
 import Page from './Page'
 import logger from './utils/logger'
 
+export const config = {
+  timeout: 20000,
+  'User-Agent':
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
+}
+
 export function noop() {}
 
 // superagent结果数据组装
@@ -28,8 +34,8 @@ export function assignData(data: CallbackData, type: string, resp: Response) {
   }
 }
 
-function getSourceCode(page: Page) {
-  return page.crawler.browser.getSourceCode(page.url)
+async function getSourceCode(page: Page) {
+  return await page.crawler.browser.getSourceCode(page.url, page.timeout)
 }
 
 // 默认网络请求处理

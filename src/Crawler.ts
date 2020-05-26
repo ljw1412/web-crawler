@@ -1,6 +1,6 @@
 import Page from './Page'
 import Browser from './Browser'
-import { noop, defaultWorker, undefinedCallback } from './default'
+import { config, noop, defaultWorker, undefinedCallback } from './default'
 import {
   RequestWorker,
   Callback,
@@ -30,7 +30,7 @@ export default class Crawler {
     let {
       concurrency = 1,
       worker = defaultWorker,
-      timeout = 20 * 1000,
+      timeout = config.timeout,
       headers = {},
       browerConfig,
       callback
@@ -38,7 +38,10 @@ export default class Crawler {
 
     this._concurrency = concurrency
     this._timeout = timeout
-    this._headers = headers
+    this._headers = Object.assign(
+      { 'User-Agent': config['User-Agent'] },
+      headers
+    )
     this._callback = callback
     this._initQueue(worker, concurrency)
     this.browser = new Browser(browerConfig)
