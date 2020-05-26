@@ -1,4 +1,5 @@
 import puppeteer, { LaunchOptions } from 'puppeteer'
+import { config } from './default'
 
 export default class Browser {
   _browser!: puppeteer.Browser
@@ -14,15 +15,18 @@ export default class Browser {
     this._launching = true
   }
 
-  async getSourceCode(url: string) {
+  async getSourceCode(url: string, timeout: number = config.timeout) {
     if (!this._launching) {
       await this.init()
     }
     const page = await this._browser.newPage()
-    await page.goto(url)
-    const content = await page.content()
-    await page.close()
-    return content
+    try {
+      await page.goto(url, { timeout })
+      const content = await page.content()
+      return content
+    } finally {
+      await page.close()
+    }
   }
 
   async destroy() {
