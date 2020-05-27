@@ -1,6 +1,6 @@
 {
   "name": "@ljw1412/web-crawler",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "基于Node.js的网络爬虫",
   "keywords": [
     "crawler",
@@ -21,8 +21,8 @@
     "clean": "rimraf ./lib ./types",
     "start": "ts-node --files -r tsconfig-paths/register project/index.ts",
     "build": "rimraf ./lib ./types && tsc -p ./tsconfig.production.json",
-    "test": "mocha -r ts-node/register -r tsconfig-paths/register 'tests/**/*.{ts,tsx}'",
-    "test:watch": "mocha -r ts-node/register -r tsconfig-paths/register --extensions ts,tsx --watch --watch-files src 'tests/**/*.{ts,tsx}'"
+    "test": "mocha -r ts-node/register -r tsconfig-paths/register 'tests/**/*.spec.{ts,tsx}'",
+    "test:watch": "mocha -r ts-node/register -r tsconfig-paths/register --extensions ts,tsx --watch --watch-files src 'tests/**/*.spec.{ts,tsx}'"
   },
   "repository": {
     "type": "git",
@@ -48,7 +48,9 @@
   },
   "devDependencies": {
     "@types/mocha": "^7.0.2",
+    "axios": "^0.19.2",
     "mocha": "^7.1.2",
+    "proxy-agent": "^3.1.1",
     "rimraf": "^3.0.2",
     "ts-node": "^8.9.1",
     "tsconfig-paths": "^3.9.0",

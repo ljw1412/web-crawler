@@ -119,50 +119,51 @@ c.on('error', error => {
 c.start()
 ```
 
-## 自定义worker，并使用其他网络库
+## 自定义网络库
 ```javascript
 const axios = require('axios')
 const cheerio = require('cheerio')
+import proxyAgent from 'proxy-agent'
 const { Crawler, Page, logger } = require('@ljw1412/web-crawler')
 
-// done 是一个完成方法，对应用户设置的 callback
-// done(error, data)
-const worker = async (page, done) => {
-  const { type, url, timeout, headers } = page
-  const data = { raw: '', page }
-  let error = null
-  try {
-    logger.info('[发起请求]', url)
-    const options = { timeout, headers }
-    if (type === 'image') options.responseType = 'arraybuffer'
-    const resp = await axios.get(url, options)
-    data.raw = resp.data
-    // 根据类型新增data内的属性
-    switch (type) {
-      case 'html':
-        data.$ = cheerio.load(data.raw)
-        break
-      case 'json':
-        try {
-          data.json = JSON.parse(data.raw)
-        } catch (err) {
-          logger.error('[JSON解析错误]', data.page.url, '\n', err)
-        }
-        break
-      case 'image':
-        data.buffer = resp.data
-    }
-  } catch (err) {
-    error = err
-    logger.error('[请求错误]', url, '\n', err)
+const c = new Crawler()
+
+function axiosRequest(page, data) {
+  const { id, type, url, timeout, headers, proxy } = page
+  const options = { timeout, headers }
+  if (['image', 'file'].includes(type)) options.responseType = 'arraybuffer'
+  if (proxy) {
+    // 请求代理处理
+    options.httpAgent = new proxyAgent(proxy)
+    options.httpsAgent = new proxyAgent(proxy)
   }
 
-  done(error, data)
+  logger.info(`[${id}|发起请求]axios:`, url)
+  const resp = await axios.get(url, options)
+  data.raw = resp.data
+
+  switch (type) {
+    case 'html':
+      data.$ = cheerio.load(data.raw)
+      break
+    case 'json':
+      try {
+        data.json = JSON.parse(data.raw)
+      } catch (err) {
+        logger.error(`[${id}|JSON解析错误]`, data.page.url, '\n', err)
+      }
+      break
+    case 'image':
+    case 'file':
+      data.buffer = resp.data
+      break
+  }
 }
 
-const c = new Crawler({ worker })
+// 覆盖默认请求方法
+c.default.request = axiosRequest
 
-c.add(new Page({ type: 'html', url: 'https://jd.com' }))
+c.add(new Page({ type: 'html', url: 'http://www.google.com' }))
 
 c.callback((err, { page, raw, $ }) => {
   if (err) {
