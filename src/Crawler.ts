@@ -137,6 +137,7 @@ export default class Crawler {
   addPage(page: PageOptions | PageOptions[]) {
     let pages = Array.isArray(page) ? page : [page]
     this.add(pages.map(options => new Page(options)))
+    return this
   }
 
   start() {

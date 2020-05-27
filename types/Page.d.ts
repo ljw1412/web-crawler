@@ -9,6 +9,7 @@ export default class Page {
     callback?: Callback;
     timeout?: number;
     headers: RequsetHeaders;
+    proxy: string;
     javascript: boolean;
     constructor(options: PageOptions);
 }

@@ -13,8 +13,8 @@
   - [x] 允许自定义使用网络库(默认使用`superagent`)
   - [x] 自定义请求头
   - [x] 动态页面的数据爬取
+  - [X] ?请求代理
   - [ ] 更多请求方法
-  - [ ] 请求代理
   - 其他功能构思中……
 
 ## 安装
@@ -228,6 +228,22 @@ c.add(
 c.start()
 ```
 
+## 代理请求
+
+```js
+// 为全局设置默认代理，向该爬虫队列添加页面时，如果未设置页面代理，那么页面会使用默认代理。
+new Crawler({proxy: 'socks5://127.0.0.1:1086'})
+
+// 为单个页面设置代理，优先级高于全局默认代理。
+// javascript 动态模式暂不支持代理请求。
+new Page({
+  type: 'html',
+  url: 'https://www.google.com',
+  proxy: 'socks5://127.0.0.1:1086'
+})
+```
+
+----
 
 ## API
 
@@ -259,45 +275,67 @@ c.start()
   - worker       自定义请求方法 `(page, done) => void`，最后使用执行回调`done(err, data)`。
   - browerConfig 同`puppeteer.launch([options])`中的`options`。
 
-### on(event,listener)
+### crawler.on(event,listener)
 
-### off(event,listener)
+### crawler.off(event,listener)
+
+- @param `event` \<string> 
+- @param `listener` \<Function>
+- @return `this` \<Crawler>
 
 事件绑定/解绑，使用方法见[监听绑定](#监听绑定)。
 
-### timeout(timeout)
+### crawler.timeout(timeout)
+
+- @param `timeout` \<number>
+- @return `this` \<Crawler>
 
 设置超时时间，单位毫秒(ms)。但是优先级低于`Page`实例中的`timeout`。
 
 可以在运行时进行修改，对后面添加的页面有效。
 
-### callback((err, data) => void)
+### crawler.callback(callback)
+
+- @param `callback` (err, data) => void
+- @return `this` \<Crawler>
 
 设置回调方法，格式同构造函数传参的`options.callback`。但是优先级低于`Page`实例中的`callback`。
 
 可以在运行时进行修改，对后面添加的页面有效。
 
-### filter((page: Page) => boolean)
+### crawler.filter(filter)
+- @param `filter` (page: Page) => boolean
+- @return `this` \<Crawler>
 
 设置过滤方法。返回值为false将不会加入爬虫队列。可以在运行时进行修改，对后面添加的页面有效。
 
-### add(page) / add(pages)
+### crawler.add(page) 
+- @param page \<Page>
+- @return `this` \<Crawler>
+### crawler.add(pages)
+- @param page \<Page[]>
+- @return `this` \<Crawler>
 
 向队列中添加请求一个或多个页面([`Page`](#API))。
 
-### addPage(pageOptions) / addPage(pagesOptions)
+### crawler.addPage(pageOptions)
+- @param pageOptions \<PageOptions>
+- @return `this` \<Crawler>
+### crawler.addPage(pagesOptions)
+- @param pagesOptions \<PageOptions[]>
+- @return `this` \<Crawler>
 
-向队列中添加请求一个或多个页面。这里传的是Page参数而不是Page实例。
+向队列中添加请求一个或多个页面。这里传的是Page构造器的参数而不是Page实例。
 
-### start()
+### crawler.start()
 
 开始爬取。
 
-### pause()
+### crawler.pause()
 
 暂停爬取。
 
-### stop()
+### crawler.stop()
 
 停止爬取。
 

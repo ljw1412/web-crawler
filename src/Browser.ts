@@ -1,7 +1,5 @@
 import puppeteer, { LaunchOptions } from 'puppeteer'
-import useProxy from 'puppeteer-page-proxy'
-import Page from './Page'
-import { logger } from '.'
+import { logger, Page } from '.'
 
 export default class Browser {
   _browser!: puppeteer.Browser
@@ -26,9 +24,8 @@ export default class Browser {
     try {
       page.setDefaultNavigationTimeout(timeout!)
       if (proxy) {
-        // TODO: 解决无法代理的问题
-        await useProxy(page, proxy)
-        logger.info('[请求代理]', crawlerPage.url, '->', proxy)
+        // logger.warn('[请求代理]', crawlerPage.url, '->', proxy)
+        logger.error('[支不支持代理]', crawlerPage.url, '->', proxy)
       }
       await page.goto(url)
       const content = await page.content()

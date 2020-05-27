@@ -6,6 +6,7 @@ export default class Crawler {
     private _concurrency;
     private _timeout;
     private _headers;
+    private _proxy;
     private _filter;
     private _callback?;
     private _emitter;
@@ -23,7 +24,7 @@ export default class Crawler {
     callback(callback: Callback): this;
     filter(filter: Filter): this;
     add(page: Page | Page[]): this;
-    addPage(page: PageOptions | PageOptions[]): void;
+    addPage(page: PageOptions | PageOptions[]): this;
     start(): void;
     pause(): void;
     stop(): any;

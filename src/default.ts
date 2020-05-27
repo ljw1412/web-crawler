@@ -58,7 +58,10 @@ export const defaultWorker = async (page: Page, done: Callback) => {
         .get(url)
         .timeout(timeout!)
         .set(headers)
-      if (page.proxy) req.proxy(page.proxy)
+      if (page.proxy) {
+        req.proxy(page.proxy)
+        logger.warn('[请求代理]', page.url, '->', page.proxy)
+      }
       const resp = await req
       assignData(data, type, resp)
     }
