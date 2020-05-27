@@ -1,21 +1,27 @@
 import cheerio from 'cheerio'
-import request, { Response } from 'superagent'
-import { Callback, CallbackData } from './base'
+import request from 'superagent'
+import { CallbackData } from './base'
 import Page from './Page'
 import logger from './utils/logger'
 
 require('superagent-proxy')(request)
 
-export const config = {
-  timeout: 20000,
-  'User-Agent':
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
-}
-
 export function noop() {}
 
-// superagent结果数据组装
-export function assignData(data: CallbackData, type: string, resp: Response) {
+// superagent请求
+export async function superagentRequest(page: Page, data: CallbackData) {
+  const { id, type, url, timeout, headers, proxy } = page
+  logger.info(`[${id}|发起请求]superagent:`, url)
+  const req = request
+    .get(url)
+    .timeout(timeout!)
+    .set(headers)
+  if (proxy) {
+    req.proxy(proxy)
+    logger.warn(`[${id}|请求代理]`, url, '->', proxy)
+  }
+  const resp = await req
+  // 数据处理组装到data
   switch (type) {
     case 'html':
       data.raw = resp.text
@@ -26,7 +32,7 @@ export function assignData(data: CallbackData, type: string, resp: Response) {
       try {
         data.json = JSON.parse(data.raw)
       } catch (err) {
-        logger.error('[JSON解析错误]', data.page.url, '\n', err)
+        logger.error(`[${id}|JSON解析错误]`, data.page.url, '\n', err)
       }
       break
     case 'image':
@@ -36,44 +42,7 @@ export function assignData(data: CallbackData, type: string, resp: Response) {
   }
 }
 
-async function getSourceCode(page: Page) {
-  return await page.crawler.browser.getSourceCode(page)
-}
-
-// 默认网络请求处理
-export const defaultWorker = async (page: Page, done: Callback) => {
-  const { type, url, timeout, headers, javascript } = page
-
-  const data: CallbackData = { raw: '', page }
-  let error = null
-
-  try {
-    logger.info('[发起请求]', url)
-    if (javascript) {
-      const content = await getSourceCode(page)
-      data.raw = content
-      data.$ = cheerio.load(data.raw)
-    } else {
-      const req = request
-        .get(url)
-        .timeout(timeout!)
-        .set(headers)
-      if (page.proxy) {
-        req.proxy(page.proxy)
-        logger.warn('[请求代理]', page.url, '->', page.proxy)
-      }
-      const resp = await req
-      assignData(data, type, resp)
-    }
-  } catch (err) {
-    error = err
-    logger.error(`[请求错误] ${error.message}`, url)
-  }
-
-  done(error, data)
-}
-
 // 未定义回调的错误提示
 export function undefinedCallback(err: Error | null, { page }: CallbackData) {
-  logger.error('[回调错误]', '没有进行回调处理:\n', page)
+  logger.error(`[${page.id}|回调错误]`, '没有进行回调处理:\n', page)
 }

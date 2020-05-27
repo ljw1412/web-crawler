@@ -1,9 +1,10 @@
 import Page from './Page'
 import Browser from './Browser'
-import { config, noop, defaultWorker, undefinedCallback } from './default'
+import logger from './utils/logger'
+import { noop, superagentRequest, undefinedCallback } from './default'
 import {
-  RequestWorker,
   Callback,
+  CallbackData,
   Filter,
   Queue,
   CrawlerOptions,
@@ -13,6 +14,15 @@ import {
 } from './base'
 import fastq from 'fastq'
 import { EventEmitter } from 'events'
+
+function getDefaultConfig() {
+  return {
+    timeout: 20000,
+    request: superagentRequest,
+    'User-Agent':
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
+  }
+}
 
 export default class Crawler {
   private _queue!: Queue
@@ -25,13 +35,14 @@ export default class Crawler {
   private _emitter: EventEmitter = new EventEmitter()
   private _eventTypeCount: number = 0
   private _readyExitTimer!: NodeJS.Timer
+  private _pageId = 0
   browser!: Browser
+  default = getDefaultConfig()
 
   constructor(options: CrawlerOptions = {}) {
     let {
       concurrency = 1,
-      worker = defaultWorker,
-      timeout = config.timeout,
+      timeout = this.default.timeout,
       headers = {},
       browerConfig,
       proxy = '',
@@ -41,12 +52,12 @@ export default class Crawler {
     this._concurrency = concurrency
     this._timeout = timeout
     this._headers = Object.assign(
-      { 'User-Agent': config['User-Agent'] },
+      { 'User-Agent': this.default['User-Agent'] },
       headers
     )
     this._proxy = proxy
     this._callback = callback
-    this._initQueue(worker, concurrency)
+    this._initQueue(concurrency)
     this.browser = new Browser(browerConfig)
   }
 
@@ -61,9 +72,28 @@ export default class Crawler {
     }, 3000)
   }
 
+  async _worker(page: Page, done: Callback) {
+    const { id, url, javascript } = page
+    const data: CallbackData = { raw: '', page }
+    let error = null
+    try {
+      if (javascript) {
+        const content = await this.browser.getSourceCode(page)
+        data.raw = content
+        data.$ = cheerio.load(data.raw)
+      } else {
+        await this.default.request(page, data)
+      }
+    } catch (err) {
+      error = err
+      logger.error(`[${id}|请求错误] ${error.message}`, url)
+    }
+    done(error, data)
+  }
+
   // 初始化队列
-  _initQueue(worker: RequestWorker, concurrency: number) {
-    this._queue = fastq(this, worker, concurrency)
+  _initQueue(concurrency: number) {
+    this._queue = fastq(this, this._worker, concurrency)
     this._queue.empty = this._updateReadyExitTimer.bind(this)
     this.pause()
   }
@@ -80,6 +110,7 @@ export default class Crawler {
   // 页面回调封装emit事件
   _getPageCallbackWrapper(page: Page): Callback {
     return (err, data) => {
+      this._getPageCallback(page)(err, data)
       if (err) {
         this._emitter.emit('error', err, data)
       } else {
@@ -89,7 +120,6 @@ export default class Crawler {
           this._emitter.emit(`data#${page.tag}`, data)
         }
       }
-      this._getPageCallback(page)(err, data)
     }
   }
 
@@ -124,9 +154,9 @@ export default class Crawler {
     let pages = Array.isArray(page) ? page : [page]
     pages = pages.filter(this._filter)
     pages.forEach(page => {
-      page.crawler = this
       if (!page.timeout) page.timeout = this._timeout
       if (!page.proxy) page.proxy = this._proxy
+      page.id = this._pageId++
       page.headers = Object.assign({}, this._headers, page.headers)
       this._queue.push(page, this._getPageCallbackWrapper(page))
     })

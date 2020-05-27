@@ -1,7 +1,6 @@
 import { Callback, PageOptions, RequsetHeaders } from './base';
-import Crawler from './Crawler';
 export default class Page {
-    crawler: Crawler;
+    id: number;
     type: string;
     url: string;
     marker: Record<string, any>;

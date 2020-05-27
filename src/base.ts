@@ -18,8 +18,6 @@ export type Filter = (page: Page) => boolean
 
 export type Queue = fastq.queue
 
-export type RequestWorker = fastq.worker<Crawler>
-
 export type Listener<T> = T extends 'error'
   ? (error: Error, data: CallbackData) => void
   : (data: CallbackData) => void
@@ -41,7 +39,6 @@ interface BaseOptions {
 
 export interface CrawlerOptions extends BaseOptions {
   concurrency?: number
-  worker?: RequestWorker
   browerConfig?: LaunchOptions
 }
 

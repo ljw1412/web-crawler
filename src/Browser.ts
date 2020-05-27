@@ -19,14 +19,15 @@ export default class Browser {
     if (!this._launching) {
       await this.init()
     }
-    const { url, timeout, proxy } = crawlerPage
+    const { id, url, timeout, proxy } = crawlerPage
     const page = await this._browser.newPage()
     try {
       page.setDefaultNavigationTimeout(timeout!)
       if (proxy) {
         // logger.warn('[请求代理]', crawlerPage.url, '->', proxy)
-        logger.error('[支不支持代理]', crawlerPage.url, '->', proxy)
+        logger.error(`[${id}|支不支持代理]`, crawlerPage.url, '->', proxy)
       }
+      logger.info(`[${id}|打开页面]puppeteer`, url)
       await page.goto(url)
       const content = await page.content()
       return content
