@@ -1,6 +1,7 @@
 import Page from './Page'
 import Browser from './Browser'
 import logger from './utils/logger'
+import cheerio from 'cheerio'
 import { noop, superagentRequest, undefinedCallback } from './default'
 import {
   Callback,

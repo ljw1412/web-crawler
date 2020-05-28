@@ -24,6 +24,7 @@ export default class Browser {
     try {
       page.setDefaultNavigationTimeout(timeout!)
       if (proxy) {
+        // await page.setRequestInterception(true)
         // logger.warn('[请求代理]', crawlerPage.url, '->', proxy)
         logger.error(`[${id}|支不支持代理]`, crawlerPage.url, '->', proxy)
       }
@@ -31,9 +32,6 @@ export default class Browser {
       await page.goto(url)
       const content = await page.content()
       return content
-    } catch (err) {
-      console.error(err)
-      throw err
     } finally {
       await page.close()
     }

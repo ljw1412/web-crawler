@@ -317,7 +317,7 @@ new Page({
 - @param page \<Page[]>
 - @return `this` \<Crawler>
 
-向队列中添加请求一个或多个页面([`Page`](#API))。
+向队列中添加请求一个或多个页面([`Page`](#api))。
 
 ### crawler.addPage(pageOptions)
 - @param pageOptions \<PageOptions>
