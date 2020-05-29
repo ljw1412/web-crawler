@@ -7,5 +7,6 @@ export default class Browser {
     constructor(config?: LaunchOptions);
     init(): Promise<void>;
     getSourceCode(crawlerPage: Page): Promise<string>;
+    getPageCount(): Promise<number>;
     destroy(): Promise<void>;
 }

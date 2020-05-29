@@ -11,6 +11,7 @@ export async function axiosRequest(page: Page, data: CallbackData) {
   if (proxy) {
     options.httpAgent = new proxyAgent(proxy)
     options.httpsAgent = new proxyAgent(proxy)
+    logger.warn('[请求代理]', url, '->', proxy)
   }
 
   logger.info(`[${id}|发起请求]axios:`, url)

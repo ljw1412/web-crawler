@@ -65,10 +65,16 @@ export default class Crawler {
   // 更新准备退出的计时器
   _updateReadyExitTimer() {
     clearTimeout(this._readyExitTimer)
-    this._readyExitTimer = setTimeout(() => {
+    this._readyExitTimer = setTimeout(async () => {
       if (this.browser._launching) {
-        this.browser.destroy()
-        clearTimeout(this._readyExitTimer)
+        const pageCount = (await this.browser.getPageCount()) - 1
+        console.log('[browser] pageCount:', pageCount)
+        if (pageCount) {
+          this._updateReadyExitTimer()
+        } else {
+          this.browser.destroy()
+          clearTimeout(this._readyExitTimer)
+        }
       }
     }, 3000)
   }

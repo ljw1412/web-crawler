@@ -1,5 +1,6 @@
 import puppeteer, { LaunchOptions } from 'puppeteer'
 import { logger, Page } from '.'
+import useProxy from './utils/proxy'
 
 export default class Browser {
   _browser!: puppeteer.Browser
@@ -24,9 +25,8 @@ export default class Browser {
     try {
       page.setDefaultNavigationTimeout(timeout!)
       if (proxy) {
-        // await page.setRequestInterception(true)
-        // logger.warn('[请求代理]', crawlerPage.url, '->', proxy)
-        logger.error(`[${id}|支不支持代理]`, crawlerPage.url, '->', proxy)
+        logger.warn('[请求代理]', url, '->', proxy)
+        await useProxy(page, proxy)
       }
       logger.info(`[${id}|打开页面]puppeteer`, url)
       await page.goto(url)
@@ -35,6 +35,10 @@ export default class Browser {
     } finally {
       await page.close()
     }
+  }
+
+  async getPageCount() {
+    return (await this._browser.pages()).length
   }
 
   async destroy() {

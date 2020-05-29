@@ -13,7 +13,7 @@
   - [x] 允许自定义使用网络库(默认使用`superagent`)
   - [x] 自定义请求头
   - [x] 动态页面的数据爬取
-  - [X] ?请求代理
+  - [X] 请求代理
   - [ ] 更多请求方法
   - 其他功能构思中……
 
@@ -136,6 +136,7 @@ function axiosRequest(page, data) {
     // 请求代理处理
     options.httpAgent = new proxyAgent(proxy)
     options.httpsAgent = new proxyAgent(proxy)
+    logger.warn('[请求代理]', url, '->', proxy)
   }
 
   logger.info(`[${id}|发起请求]axios:`, url)
