@@ -21,6 +21,12 @@ export default class Crawler {
         'User-Agent': string;
     };
     constructor(options?: CrawlerOptions);
+    static use(plugin: Function): void;
+    _getDefaultConfig(): {
+        timeout: number;
+        request: typeof superagentRequest;
+        'User-Agent': string;
+    };
     _updateReadyExitTimer(): void;
     _worker(page: Page, done: Callback): Promise<void>;
     _initQueue(concurrency: number): void;

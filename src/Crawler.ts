@@ -16,15 +16,6 @@ import {
 import fastq from 'fastq'
 import { EventEmitter } from 'events'
 
-function getDefaultConfig() {
-  return {
-    timeout: 20000,
-    request: superagentRequest,
-    'User-Agent':
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
-  }
-}
-
 export default class Crawler {
   private _queue!: Queue
   private _concurrency!: number
@@ -38,7 +29,7 @@ export default class Crawler {
   private _readyExitTimer!: NodeJS.Timer
   private _pageId = 0
   browser!: Browser
-  default = getDefaultConfig()
+  default = this._getDefaultConfig()
 
   constructor(options: CrawlerOptions = {}) {
     let {
@@ -60,6 +51,19 @@ export default class Crawler {
     this._callback = callback
     this._initQueue(concurrency)
     this.browser = new Browser(browerConfig)
+  }
+
+  static use(plugin: Function) {
+    plugin.apply(null, [this])
+  }
+
+  _getDefaultConfig() {
+    return {
+      timeout: 20000,
+      request: superagentRequest,
+      'User-Agent':
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
+    }
   }
 
   // 更新准备退出的计时器
