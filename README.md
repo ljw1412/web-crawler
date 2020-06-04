@@ -14,6 +14,7 @@
   - [x] 自定义请求头
   - [x] 动态页面的数据爬取
   - [X] 请求代理
+  - [X] 简单的插件扩展支持
   - [ ] 更多请求方法
   - 其他功能构思中……
 
@@ -277,6 +278,10 @@ new Page({
   - worker       自定义请求方法 `(page, done) => void`，最后使用执行回调`done(err, data)`。
   - browerConfig 同`puppeteer.launch([options])`中的`options`。
 
+### Crawler.use(plugin)
+
+- @param `plugin` <(Crawler) => void>
+
 ### crawler.on(event,listener)
 
 ### crawler.off(event,listener)
@@ -341,3 +346,8 @@ new Page({
 
 停止爬取。
 
+---
+
+## 插件
+
+[web-crawler-axios-plugin](https://github.com/ljw1412/web-crawler-axios-plugin)

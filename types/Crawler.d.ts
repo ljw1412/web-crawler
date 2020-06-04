@@ -16,7 +16,7 @@ export default class Crawler {
     browser: Browser;
     default: CrawlerDefaultOptions;
     constructor(options?: CrawlerOptions);
-    static use(plugin: Function): void;
+    static use(plugin: Function): typeof Crawler;
     _getDefaultConfig(): CrawlerDefaultOptions;
     _updateReadyExitTimer(): void;
     _worker(page: Page, done: Callback): Promise<void>;

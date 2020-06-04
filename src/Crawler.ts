@@ -56,6 +56,7 @@ export default class Crawler {
 
   static use(plugin: Function) {
     plugin.apply(null, [this])
+    return this
   }
 
   _getDefaultConfig(): CrawlerDefaultOptions {
