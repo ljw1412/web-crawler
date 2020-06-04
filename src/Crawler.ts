@@ -9,6 +9,7 @@ import {
   Filter,
   Queue,
   CrawlerOptions,
+  CrawlerDefaultOptions,
   Listener,
   RequsetHeaders,
   PageOptions
@@ -57,7 +58,7 @@ export default class Crawler {
     plugin.apply(null, [this])
   }
 
-  _getDefaultConfig() {
+  _getDefaultConfig(): CrawlerDefaultOptions {
     return {
       timeout: 20000,
       request: superagentRequest,

@@ -30,6 +30,13 @@ export interface RequsetHeaders {
   [k: string]: any
 }
 
+export interface CrawlerDefaultOptions {
+  timeout: number
+  request: (page: Page, data: CallbackData) => Promise<void>
+  'User-Agent': string
+  [k: string]: any
+}
+
 interface BaseOptions {
   timeout?: number
   proxy?: string

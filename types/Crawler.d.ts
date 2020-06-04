@@ -1,7 +1,6 @@
 import Page from './Page';
 import Browser from './Browser';
-import { superagentRequest } from './default';
-import { Callback, Filter, CrawlerOptions, Listener, PageOptions } from './base';
+import { Callback, Filter, CrawlerOptions, CrawlerDefaultOptions, Listener, PageOptions } from './base';
 export default class Crawler {
     private _queue;
     private _concurrency;
@@ -15,18 +14,10 @@ export default class Crawler {
     private _readyExitTimer;
     private _pageId;
     browser: Browser;
-    default: {
-        timeout: number;
-        request: typeof superagentRequest;
-        'User-Agent': string;
-    };
+    default: CrawlerDefaultOptions;
     constructor(options?: CrawlerOptions);
     static use(plugin: Function): void;
-    _getDefaultConfig(): {
-        timeout: number;
-        request: typeof superagentRequest;
-        'User-Agent': string;
-    };
+    _getDefaultConfig(): CrawlerDefaultOptions;
     _updateReadyExitTimer(): void;
     _worker(page: Page, done: Callback): Promise<void>;
     _initQueue(concurrency: number): void;
