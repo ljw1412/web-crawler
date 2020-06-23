@@ -25,6 +25,7 @@ export default class Crawler {
   private _proxy!: string
   private _filter: Filter = _ => true
   private _callback?: Callback
+  private _end?: Function
   private _emitter: EventEmitter = new EventEmitter()
   private _eventTypeCount: number = 0
   private _readyExitTimer!: NodeJS.Timer
@@ -39,7 +40,8 @@ export default class Crawler {
       headers = {},
       browerConfig,
       proxy = '',
-      callback
+      callback,
+      end
     } = options
 
     this._concurrency = concurrency
@@ -50,6 +52,7 @@ export default class Crawler {
     )
     this._proxy = proxy
     this._callback = callback
+    this._end = end
     this._initQueue(concurrency)
     this.browser = new Browser(browerConfig)
   }
@@ -68,6 +71,11 @@ export default class Crawler {
     }
   }
 
+  _callEndFunction() {
+    if (this._end) this._end()
+    this._emitter.emit('end')
+  }
+
   // 更新准备退出的计时器
   _updateReadyExitTimer() {
     clearTimeout(this._readyExitTimer)
@@ -80,7 +88,10 @@ export default class Crawler {
         } else {
           this.browser.destroy()
           clearTimeout(this._readyExitTimer)
+          this._callEndFunction()
         }
+      } else {
+        this._callEndFunction()
       }
     }, 3000)
   }

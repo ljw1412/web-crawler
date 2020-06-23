@@ -20,6 +20,10 @@ c.on('error', (error, { page }) => {
   // console.log(error)
 })
 
+c.on('end', () => {
+  console.log('end')
+})
+
 c.add(
   new Page({
     type: 'image',

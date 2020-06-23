@@ -37,6 +37,7 @@ interface BaseOptions {
 export interface CrawlerOptions extends BaseOptions {
     concurrency?: number;
     browerConfig?: LaunchOptions;
+    end?: Function;
 }
 export interface PageOptions extends BaseOptions {
     type: 'html' | 'image' | 'file' | 'json' | string;

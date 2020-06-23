@@ -9,6 +9,7 @@ export default class Crawler {
     private _proxy;
     private _filter;
     private _callback?;
+    private _end?;
     private _emitter;
     private _eventTypeCount;
     private _readyExitTimer;
@@ -18,6 +19,7 @@ export default class Crawler {
     constructor(options?: CrawlerOptions);
     static use(plugin: Function): typeof Crawler;
     _getDefaultConfig(): CrawlerDefaultOptions;
+    _callEndFunction(): void;
     _updateReadyExitTimer(): void;
     _worker(page: Page, done: Callback): Promise<void>;
     _initQueue(concurrency: number): void;
