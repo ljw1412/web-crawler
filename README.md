@@ -80,6 +80,7 @@ c.start()
   - data.{type}
   - data#{tag}
   - error
+  - end
 
 ```javascript
 const { Crawler, Page, logger } = require('@ljw1412/web-crawler')
@@ -115,6 +116,10 @@ c.on('data#no-money', ({ page, raw, $ }) => {
 // 监听所有的错误
 c.on('error', error => {
   logger.error('[error]', page.url, error)
+})
+
+c.on('end', () => {
+  logger.success('[]',)
 })
 
 c.start()
@@ -274,6 +279,7 @@ new Page({
   - timeout      超时时间(ms)，默认值 `20 * 1000`。
   - headers      设置请求头
   - callback     请求完成后的回调 `(err, data) => void`。
+  - end          爬虫结束事件 `()=>void`
   - concurrency  允许的并发数量
   - worker       自定义请求方法 `(page, done) => void`，最后使用执行回调`done(err, data)`。
   - browerConfig 同`puppeteer.launch([options])`中的`options`。
