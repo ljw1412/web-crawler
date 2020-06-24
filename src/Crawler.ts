@@ -77,23 +77,23 @@ export default class Crawler {
   }
 
   // 更新准备退出的计时器
-  _updateReadyExitTimer() {
+  async _updateReadyExitTimer() {
     clearTimeout(this._readyExitTimer)
-    this._readyExitTimer = setTimeout(async () => {
-      if (this.browser._launching) {
-        const pageCount = (await this.browser.getPageCount()) - 1
-        console.log('[browser] pageCount:', pageCount)
-        if (pageCount) {
+    if (this.browser._launching) {
+      const pageCount = (await this.browser.getPageCount()) - 1
+      console.log('[browser] pageCount:', pageCount)
+      if (pageCount) {
+        this._readyExitTimer = setTimeout(() => {
           this._updateReadyExitTimer()
-        } else {
-          this.browser.destroy()
-          clearTimeout(this._readyExitTimer)
-          this._callEndFunction()
-        }
+        }, 3000)
       } else {
+        this.browser.destroy()
+        clearTimeout(this._readyExitTimer)
         this._callEndFunction()
       }
-    }, 3000)
+    } else {
+      this._callEndFunction()
+    }
   }
 
   async _worker(page: Page, done: Callback) {
@@ -118,7 +118,8 @@ export default class Crawler {
   // 初始化队列
   _initQueue(concurrency: number) {
     this._queue = fastq(this, this._worker, concurrency)
-    this._queue.empty = this._updateReadyExitTimer.bind(this)
+    // this._queue.empty = this._updateReadyExitTimer.bind(this)
+    this._queue.drain = this._updateReadyExitTimer.bind(this)
     this.pause()
   }
 
