@@ -20,7 +20,7 @@ export default class Crawler {
     static use(plugin: Function): typeof Crawler;
     _getDefaultConfig(): CrawlerDefaultOptions;
     _callEndFunction(): void;
-    _updateReadyExitTimer(): void;
+    _updateReadyExitTimer(): Promise<void>;
     _worker(page: Page, done: Callback): Promise<void>;
     _initQueue(concurrency: number): void;
     _getPageCallback(page: Page): Callback;
