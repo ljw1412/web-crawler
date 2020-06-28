@@ -56,6 +56,9 @@ export interface PageOptions extends BaseOptions {
   javascript?: boolean
   tag?: string
   marker?: Record<string, any>
+  method?: 'GET' | 'POST'
+  query?: string | object
+  data?: string | object
 }
 
 export const version: string = require('../package.json').version

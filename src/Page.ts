@@ -12,6 +12,12 @@ export default class Page {
   proxy!: string
   // 是否启用javascript(即使用无头浏览器进行页面加载，实现获取动态网页数据)
   javascript!: boolean
+  // 请求方法和数据
+  method!: 'GET' | 'POST'
+  // GET请求参数
+  query?: string | object
+  // POST 请求参数
+  data?: string | object
 
   constructor(options: PageOptions) {
     const {
@@ -23,7 +29,10 @@ export default class Page {
       javascript = false,
       marker = {},
       headers = {},
-      proxy = ''
+      proxy = '',
+      method = 'GET',
+      query,
+      data
     } = options
 
     this.type = type
@@ -35,5 +44,8 @@ export default class Page {
     this.headers = headers
     this.javascript = javascript
     this.proxy = proxy
+    this.method = method
+    this.query = query
+    this.data = data
   }
 }

@@ -9,13 +9,19 @@ require('superagent-proxy')(request)
 export function noop() {}
 
 // superagent请求
-export async function superagentRequest(page: Page, data: CallbackData) {
-  const { id, type, url, timeout, headers, proxy } = page
+export async function superagentRequest(page: Page, cbData: CallbackData) {
+  const { id, type, url, timeout, headers, proxy, method, data, query } = page
   logger.info(`[${id}|发起请求]superagent:`, url)
-  const req = request
-    .get(url)
-    .timeout(timeout!)
-    .set(headers)
+  let req
+  // 请求方法与请求数据处理
+  if (method === 'POST') {
+    req = request.post(url)
+    if (data) req.send(data)
+  } else {
+    req = request.get(url)
+    if (query) req.query(query)
+  }
+  req.timeout(timeout!).set(headers)
   if (proxy) {
     req.proxy(proxy)
     logger.warn(`[${id}|请求代理]`, url, '->', proxy)
@@ -24,20 +30,20 @@ export async function superagentRequest(page: Page, data: CallbackData) {
   // 数据处理组装到data
   switch (type) {
     case 'html':
-      data.raw = resp.text
-      data.$ = cheerio.load(data.raw)
+      cbData.raw = resp.text
+      cbData.$ = cheerio.load(cbData.raw)
       break
     case 'json':
-      data.raw = resp.text
+      cbData.raw = resp.text
       try {
-        data.json = JSON.parse(data.raw)
+        cbData.json = JSON.parse(cbData.raw)
       } catch (err) {
-        logger.error(`[${id}|JSON解析错误]`, data.page.url, '\n', err)
+        logger.error(`[${id}|JSON解析错误]`, cbData.page.url, '\n', err)
       }
       break
     case 'image':
     case 'file':
-      data.buffer = resp.body
+      cbData.buffer = resp.body
       break
   }
 }

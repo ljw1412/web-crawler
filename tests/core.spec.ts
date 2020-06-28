@@ -57,6 +57,48 @@ describe('Crawler', function() {
     })
   })
 
+  it('[Query]使用带参数的 GET 请求', async function() {
+    await new Promise((resolve, reject) => {
+      this.crawler.addPage({
+        type: 'json',
+        url: 'http://api.isoyu.com/api/News/new_list',
+        query: { type: 1, page: 1 },
+        callback: (err, { json }) => {
+          if (err) {
+            reject(err)
+            return assert(false, err)
+          }
+          if (!json) return assert(false, 'json is undefined.')
+          assert(json.msg === 'success')
+          resolve()
+        }
+      })
+      this.crawler.start()
+    })
+  })
+
+  it('[Data]使用带参数的 POST 请求', async function() {
+    await new Promise((resolve, reject) => {
+      this.crawler.addPage({
+        type: 'json',
+        url:
+          'https://manga.bilibili.com/twirp/comic.v1.Comic/HomeRecommend?device=pc&platform=web',
+        method: 'POST',
+        data: { page_num: 1, platform: 'phone', seed: 1, drag: 0 },
+        callback: (err, { json }) => {
+          if (err) {
+            reject(err)
+            return assert(false, err)
+          }
+          if (!json) return assert(false, 'json is undefined.')
+          assert(json.code === 0)
+          resolve()
+        }
+      })
+      this.crawler.start()
+    })
+  })
+
   it('[custom]自定义请求', async function() {
     this.crawler.default.request = axiosRequest
 

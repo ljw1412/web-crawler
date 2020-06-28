@@ -45,6 +45,9 @@ export interface PageOptions extends BaseOptions {
     javascript?: boolean;
     tag?: string;
     marker?: Record<string, any>;
+    method?: 'GET' | 'POST';
+    query?: string | object;
+    data?: string | object;
 }
 export declare const version: string;
 export {};

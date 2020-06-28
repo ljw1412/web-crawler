@@ -179,6 +179,10 @@ export default class Crawler {
     let pages = Array.isArray(page) ? page : [page]
     pages = pages.filter(this._filter)
     pages.forEach(page => {
+      if (page.method === 'POST' && page.javascript) {
+        logger.error(`[不支持的参数] 动态页面加载只支持 GET 请求`, page.url)
+        return
+      }
       if (!page.timeout) page.timeout = this._timeout
       if (!page.proxy) page.proxy = this._proxy
       page.id = this._pageId++

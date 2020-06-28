@@ -15,7 +15,7 @@
   - [x] 动态页面的数据爬取
   - [X] 请求代理
   - [X] 简单的插件扩展支持
-  - [ ] 更多请求方法
+  - [X] 请求方法支持GET/POST(允许带参数)
   - 其他功能构思中……
 
 ## 安装
@@ -269,6 +269,9 @@ new Page({
   - javascript   是否加载页面的js。
   - tag          标签，用于回调标记。
   - marker       自定义标记数据对象。
+  - method       请求方法，可选值GET/POST,默认GET
+  - query        GET的请求数据
+  - data         POST的请求数据
 
 ### new Crawler([options])
 

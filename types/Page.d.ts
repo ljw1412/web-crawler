@@ -10,5 +10,8 @@ export default class Page {
     headers: RequsetHeaders;
     proxy: string;
     javascript: boolean;
+    method: 'GET' | 'POST';
+    query?: string | object;
+    data?: string | object;
     constructor(options: PageOptions);
 }
