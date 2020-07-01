@@ -26,12 +26,15 @@ export default class Crawler {
   private _filter: Filter = _ => true
   private _callback?: Callback
   private _end?: Function
-  private _emitter: EventEmitter = new EventEmitter()
-  private _eventTypeCount: number = 0
+  private _emitter = new EventEmitter()
   private _readyExitTimer!: NodeJS.Timer
   private _pageId = 0
   browser!: Browser
   default = this._getDefaultConfig()
+
+  private get _eventTypeCount() {
+    return this._emitter.eventNames().length
+  }
 
   constructor(options: CrawlerOptions = {}) {
     let {
@@ -81,7 +84,6 @@ export default class Crawler {
     clearTimeout(this._readyExitTimer)
     if (this.browser._launching) {
       const pageCount = (await this.browser.getPageCount()) - 1
-      console.log('[browser] pageCount:', pageCount)
       if (pageCount) {
         this._readyExitTimer = setTimeout(() => {
           this._updateReadyExitTimer()
@@ -118,7 +120,6 @@ export default class Crawler {
   // 初始化队列
   _initQueue(concurrency: number) {
     this._queue = fastq(this, this._worker, concurrency)
-    // this._queue.empty = this._updateReadyExitTimer.bind(this)
     this._queue.drain = this._updateReadyExitTimer.bind(this)
     this.pause()
   }
@@ -137,7 +138,11 @@ export default class Crawler {
     return (err, data) => {
       this._getPageCallback(page)(err, data)
       if (err) {
-        this._emitter.emit('error', err, data)
+        // 当 error 被触发时，EventEmitter 规定如果没有响 应的监听器，
+        // 此处理防止 Node.js 会把它当作异常，退出程序并输出错误信息。
+        if (this._emitter.eventNames().includes('error')) {
+          this._emitter.emit('error', err, data)
+        }
       } else {
         this._emitter.emit('data', data)
         this._emitter.emit(`data.${page.type}`, data)
@@ -150,13 +155,11 @@ export default class Crawler {
 
   on<T extends string | symbol>(event: T, listener: Listener<T>) {
     this._emitter.on(event, listener)
-    this._eventTypeCount = this._emitter.eventNames().length
     return this
   }
 
   off(event: string | symbol, listener: (...args: any[]) => void) {
     this._emitter.off(event, listener)
-    this._eventTypeCount = this._emitter.eventNames().length
     return this
   }
 

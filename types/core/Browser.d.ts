@@ -1,5 +1,5 @@
 import puppeteer, { LaunchOptions } from 'puppeteer';
-import { Page } from '.';
+import Page from '../core/Page';
 export default class Browser {
     _browser: puppeteer.Browser;
     _launching: boolean;

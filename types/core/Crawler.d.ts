@@ -11,11 +11,11 @@ export default class Crawler {
     private _callback?;
     private _end?;
     private _emitter;
-    private _eventTypeCount;
     private _readyExitTimer;
     private _pageId;
     browser: Browser;
     default: CrawlerDefaultOptions;
+    private get _eventTypeCount();
     constructor(options?: CrawlerOptions);
     static use(plugin: Function): typeof Crawler;
     _getDefaultConfig(): CrawlerDefaultOptions;
