@@ -60,4 +60,4 @@ export interface PageOptions extends BaseOptions {
   data?: string | object
 }
 
-export const version: string = require('../package.json').version
+export const version: string = require('../../package.json').version

@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import proxyAgent from 'proxy-agent'
 import { Page, logger } from '@/index'
 import cheerio from 'cheerio'
-import { CallbackData } from '@/base'
+import { CallbackData } from '@/core/base'
 
 export async function axiosRequest(page: Page, data: CallbackData) {
   const { id, type, url, timeout, headers, proxy } = page

@@ -1,6 +1,6 @@
 import assert from 'assert'
-import Browser from '@/Browser'
-import Page from '@/Page'
+import Browser from '@/core/Browser'
+import Page from '@/core/Page'
 
 const browser = new Browser()
 
