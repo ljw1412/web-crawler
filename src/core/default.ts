@@ -2,7 +2,7 @@ import cheerio from 'cheerio'
 import request from 'superagent'
 import { CallbackData } from './base'
 import Page from './Page'
-import logger from './utils/logger'
+import logger from '../utils/logger'
 
 require('superagent-proxy')(request)
 

@@ -1,6 +1,5 @@
 import fastq from 'fastq'
 import Page from './Page'
-import Crawler from './Crawler'
 import { LaunchOptions } from 'puppeteer'
 
 export interface CallbackData {

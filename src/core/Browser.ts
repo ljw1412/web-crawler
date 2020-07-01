@@ -1,6 +1,7 @@
 import puppeteer, { LaunchOptions } from 'puppeteer'
-import { logger, Page } from '.'
-import useProxy from './utils/proxy'
+import Page from '../core/Page'
+import logger from '../utils/logger'
+import useProxy from '../utils/proxy'
 
 export default class Browser {
   _browser!: puppeteer.Browser
