@@ -69,9 +69,11 @@ export default class Crawler {
   }
 
   _callEndFunction() {
-    if (this._end) this._end()
-    this._emitter.emit('end')
-    this._emitter.successLog('Crawler End', `累计爬取${this._pageId}个页面`)
+    if (this._pageId) {
+      if (this._end) this._end()
+      this._emitter.emit('end')
+      this._emitter.successLog('Crawler End', `累计爬取${this._pageId}个页面`)
+    }
   }
 
   // 更新准备退出的计时器
