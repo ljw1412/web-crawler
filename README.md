@@ -141,17 +141,17 @@ const { Crawler, Page, logger } = require('@ljw1412/web-crawler')
 const c = new Crawler()
 
 async function axiosRequest(page, data) {
-  const { id, type, url, timeout, headers, proxy } = page
+  const { id, type, url, timeout, headers, proxy, emitter } = page
   const options = { timeout, headers }
   if (['image', 'file'].includes(type)) options.responseType = 'arraybuffer'
   if (proxy) {
     // 请求代理处理
     options.httpAgent = new proxyAgent(proxy)
     options.httpsAgent = new proxyAgent(proxy)
-    logger.warn('[请求代理]', url, '->', proxy)
+    emitter.warnLog('Request Proxy', `#${id} ${url} -> ${proxy}`, { page })
   }
 
-  logger.info(`[${id}|发起请求]axios:`, url)
+  emitter.infoLog('Before Request', `#${id} axios:${url}`, { page })
   const resp = await axios.get(url, options)
   data.raw = resp.data
 
@@ -163,7 +163,11 @@ async function axiosRequest(page, data) {
       try {
         data.json = JSON.parse(data.raw)
       } catch (err) {
-        logger.error(`[${id}|JSON解析错误]`, data.page.url, '\n', err)
+        emitter.errorLog(
+          'SyntaxError',
+          `#${id} ${url}\n$JSON解析错误: {error.message}`,
+          { error, page }
+        )
       }
       break
     case 'image':
@@ -176,7 +180,13 @@ async function axiosRequest(page, data) {
 // 覆盖默认请求方法
 c.default.request = axiosRequest
 
-c.add(new Page({ type: 'html', url: 'http://www.google.com' }))
+c.add(
+  new Page({
+    type: 'html',
+    url: 'http://www.google.com',
+    proxy: 'socks5://127.0.0.1:1086'
+  })
+)
 
 c.callback((err, { page, raw, $ }) => {
   if (err) {
