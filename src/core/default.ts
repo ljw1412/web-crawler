@@ -1,6 +1,6 @@
 import cheerio from 'cheerio'
 import request from 'superagent'
-import { CallbackData } from './base'
+import { CallbackData, CrawlerDefaultOptions } from './base'
 import Page from './Page'
 import logger from '../utils/logger'
 
@@ -51,4 +51,16 @@ export async function superagentRequest(page: Page, cbData: CallbackData) {
 // 未定义回调的错误提示
 export function undefinedCallback(err: Error | null, { page }: CallbackData) {
   logger.error(`[${page.id}|回调错误]`, '没有进行回调处理:\n', page)
+}
+
+/**
+ * 获取默认配置
+ */
+export function getDefaultConfig(): CrawlerDefaultOptions {
+  return {
+    timeout: 20000,
+    request: superagentRequest,
+    'User-Agent':
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
+  }
 }

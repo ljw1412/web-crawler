@@ -2,14 +2,13 @@ import Page from './Page'
 import Browser from './Browser'
 import logger from '../utils/logger'
 import cheerio from 'cheerio'
-import { noop, superagentRequest, undefinedCallback } from './default'
+import { noop, getDefaultConfig, undefinedCallback } from './default'
 import {
   Callback,
   CallbackData,
   Filter,
   Queue,
   CrawlerOptions,
-  CrawlerDefaultOptions,
   Listener,
   RequsetHeaders,
   PageOptions
@@ -30,7 +29,7 @@ export default class Crawler {
   private _readyExitTimer!: NodeJS.Timer
   private _pageId = 0
   browser!: Browser
-  default = this._getDefaultConfig()
+  default = getDefaultConfig()
 
   private get _eventTypeCount() {
     return this._emitter.eventNames().length
@@ -49,10 +48,7 @@ export default class Crawler {
 
     this._concurrency = concurrency
     this._timeout = timeout
-    this._headers = Object.assign(
-      { 'User-Agent': this.default['User-Agent'] },
-      headers
-    )
+    this._headers = this._initHeaders(headers)
     this._proxy = proxy
     this._callback = callback
     this._end = end
@@ -65,13 +61,8 @@ export default class Crawler {
     return this
   }
 
-  _getDefaultConfig(): CrawlerDefaultOptions {
-    return {
-      timeout: 20000,
-      request: superagentRequest,
-      'User-Agent':
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
-    }
+  _initHeaders(headers: Record<string, any>) {
+    return Object.assign({ 'User-Agent': this.default['User-Agent'] }, headers)
   }
 
   _callEndFunction() {
