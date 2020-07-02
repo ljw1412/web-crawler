@@ -1,6 +1,5 @@
 import Page from './Page'
 import Browser from './Browser'
-import logger from '../utils/logger'
 import cheerio from 'cheerio'
 import { noop, getDefaultConfig, undefinedCallback } from './default'
 import {
@@ -14,7 +13,7 @@ import {
   PageOptions
 } from './base'
 import fastq from 'fastq'
-import { EventEmitter } from 'events'
+import EventEmitter from '../utils/emitter'
 
 export default class Crawler {
   private _queue!: Queue
@@ -28,6 +27,7 @@ export default class Crawler {
   private _emitter = new EventEmitter()
   private _readyExitTimer!: NodeJS.Timer
   private _pageId = 0
+  private _hideDefaultLog!: boolean
   browser!: Browser
   default = getDefaultConfig()
 
@@ -38,6 +38,7 @@ export default class Crawler {
   constructor(options: CrawlerOptions = {}) {
     let {
       concurrency = 1,
+      hideDefaultLog = false,
       timeout = this.default.timeout,
       headers = {},
       browerConfig,
@@ -52,6 +53,8 @@ export default class Crawler {
     this._proxy = proxy
     this._callback = callback
     this._end = end
+    this._hideDefaultLog = hideDefaultLog
+    this._emitter.printConsole = !hideDefaultLog
     this._initQueue(concurrency)
     this.browser = new Browser(browerConfig)
   }
@@ -68,6 +71,7 @@ export default class Crawler {
   _callEndFunction() {
     if (this._end) this._end()
     this._emitter.emit('end')
+    this._emitter.successLog('Crawler End', `累计爬取${this._pageId}个页面`)
   }
 
   // 更新准备退出的计时器
@@ -103,7 +107,6 @@ export default class Crawler {
       }
     } catch (err) {
       error = err
-      logger.error(`[${id}|请求错误] ${error.message}`, url)
     }
     done(error, data)
   }
@@ -126,20 +129,26 @@ export default class Crawler {
 
   // 页面回调封装emit事件
   _getPageCallbackWrapper(page: Page): Callback {
-    return (err, data) => {
-      this._getPageCallback(page)(err, data)
-      if (err) {
+    return (error, data) => {
+      const { id, url } = page
+      let msg = `#${id} ${url}`
+      const store = { error, page, data }
+      this._getPageCallback(page)(error, data)
+      if (error) {
         // 当 error 被触发时，EventEmitter 规定如果没有响 应的监听器，
         // 此处理防止 Node.js 会把它当作异常，退出程序并输出错误信息。
         if (this._emitter.eventNames().includes('error')) {
-          this._emitter.emit('error', err, data)
+          this._emitter.emit('error', error, data)
         }
+        msg += `\n${error.message}`
+        this._emitter.errorLog('Request Error', msg, store)
       } else {
         this._emitter.emit('data', data)
         this._emitter.emit(`data.${page.type}`, data)
         if (page.tag) {
           this._emitter.emit(`data#${page.tag}`, data)
         }
+        this._emitter.successLog('Request Success', msg, store)
       }
     }
   }
@@ -174,12 +183,18 @@ export default class Crawler {
     pages = pages.filter(this._filter)
     pages.forEach(page => {
       if (page.method === 'POST' && page.javascript) {
-        logger.error(`[不支持的参数] 动态页面加载只支持 GET 请求`, page.url)
+        const { id, url } = page
+        this._emitter.errorLog(
+          'Not Supported',
+          `#${id} ${url}\n动态页面加载只支持 GET 请求`,
+          { page }
+        )
         return
       }
       if (!page.timeout) page.timeout = this._timeout
       if (!page.proxy) page.proxy = this._proxy
       page.id = this._pageId++
+      page.emitter = this._emitter
       page.headers = Object.assign({}, this._headers, page.headers)
       this._queue.push(page, this._getPageCallbackWrapper(page))
     })
@@ -194,10 +209,13 @@ export default class Crawler {
   }
 
   start() {
+    this._emitter.infoLog('Crawler Start', new Date().toString())
     this._queue.resume()
   }
 
   pause() {
+    !this._queue.idle() &&
+      this._emitter.infoLog('Crawler Pause', new Date().toString())
     this._queue.pause()
   }
 

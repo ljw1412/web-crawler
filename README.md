@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@ljw1412/web-crawler?style=flat-square)](https://www.npmjs.com/package/@ljw1412/web-crawler)
 
-这是一个爬虫库(一时兴起写的)。
+这是一个爬虫库。
 
 顺便学习`Typescript` 、以及对项目架构的思考。
 
@@ -16,6 +16,7 @@
   - [X] 请求代理
   - [X] 简单的插件扩展支持
   - [X] 请求方法支持GET/POST(允许带参数)
+  - [X] 自定义日志
   - 其他功能构思中……
 
 ## 安装
@@ -81,6 +82,7 @@ c.start()
   - data#{tag}
   - error
   - end
+  - log
 
 ```javascript
 const { Crawler, Page, logger } = require('@ljw1412/web-crawler')
@@ -115,11 +117,15 @@ c.on('data#no-money', ({ page, raw, $ }) => {
 
 // 监听所有的错误
 c.on('error', error => {
-  logger.error('[error]', page.url, error)
+  logger.error('[error]', error)
 })
 
 c.on('end', () => {
-  logger.success('[]',)
+  logger.success('[end]')
+})
+
+c.on('log', event => {
+  logger.info('[日志]', event)
 })
 
 c.start()
@@ -129,12 +135,12 @@ c.start()
 ```javascript
 const axios = require('axios')
 const cheerio = require('cheerio')
-import proxyAgent from 'proxy-agent'
+const proxyAgent = require('proxy-agent')
 const { Crawler, Page, logger } = require('@ljw1412/web-crawler')
 
 const c = new Crawler()
 
-function axiosRequest(page, data) {
+async function axiosRequest(page, data) {
   const { id, type, url, timeout, headers, proxy } = page
   const options = { timeout, headers }
   if (['image', 'file'].includes(type)) options.responseType = 'arraybuffer'
@@ -279,14 +285,14 @@ new Page({
 
 参数:
 - options 爬虫基础配置(对象的属性均为选填)。
-  - timeout      超时时间(ms)，默认值 `20 * 1000`。
-  - headers      设置请求头
-  - callback     请求完成后的回调 `(err, data) => void`。
-  - end          爬虫结束事件 `()=>void`
-  - concurrency  允许的并发数量
-  - worker       自定义请求方法 `(page, done) => void`，最后使用执行回调`done(err, data)`。
-  - browerConfig 同`puppeteer.launch([options])`中的`options`。
-
+  - timeout        超时时间(ms)，默认值 `20 * 1000`。
+  - headers        设置请求头
+  - callback       请求完成后的回调 `(err, data) => void`。
+  - end            爬虫结束事件 `()=>void`
+  - concurrency    允许的并发数量
+  - worker         自定义请求方法 `(page, done) => void`，最后使用执行回调`done(err, data)`。
+  - browerConfig   同`puppeteer.launch([options])`中的`options`。
+  - hideDefaultLog 隐藏默认控制台日志输出，默认值`false`
 ### Crawler.use(plugin)
 
 - @param `plugin` <(Crawler) => void>

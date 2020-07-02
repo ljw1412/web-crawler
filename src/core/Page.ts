@@ -1,4 +1,5 @@
 import { Callback, PageOptions, RequsetHeaders } from './base'
+import Emitter from '../utils/emitter'
 
 export default class Page {
   id: number = -1
@@ -10,6 +11,7 @@ export default class Page {
   timeout?: number
   headers!: RequsetHeaders
   proxy!: string
+  emitter!: Emitter
   // 是否启用javascript(即使用无头浏览器进行页面加载，实现获取动态网页数据)
   javascript!: boolean
   // 请求方法和数据

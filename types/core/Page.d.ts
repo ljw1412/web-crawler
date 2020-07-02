@@ -1,4 +1,5 @@
 import { Callback, PageOptions, RequsetHeaders } from './base';
+import Emitter from '../utils/emitter';
 export default class Page {
     id: number;
     type: string;
@@ -9,6 +10,7 @@ export default class Page {
     timeout?: number;
     headers: RequsetHeaders;
     proxy: string;
+    emitter: Emitter;
     javascript: boolean;
     method: 'GET' | 'POST';
     query?: string | object;

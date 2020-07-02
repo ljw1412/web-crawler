@@ -1,6 +1,5 @@
 import puppeteer, { LaunchOptions } from 'puppeteer'
 import Page from '../core/Page'
-import logger from '../utils/logger'
 import useProxy from '../utils/proxy'
 
 export default class Browser {
@@ -21,15 +20,16 @@ export default class Browser {
     if (!this._launching) {
       await this.init()
     }
-    const { id, url, timeout, proxy } = crawlerPage
+    const { id, url, timeout, proxy, emitter } = crawlerPage
     const page = await this._browser.newPage()
+    const store = { page: crawlerPage }
     try {
       page.setDefaultNavigationTimeout(timeout!)
       if (proxy) {
-        logger.warn('[请求代理]', url, '->', proxy)
+        emitter.warnLog('Request Proxy', `#${id} ${url} -> ${proxy}`, store)
         await useProxy(page, proxy)
       }
-      logger.info(`[${id}|打开页面]puppeteer`, url)
+      emitter.infoLog('Open Page', `#${id} puppeteer:${url}`, store)
       await page.goto(url)
       const content = await page.content()
       return content

@@ -35,6 +35,7 @@ interface BaseOptions {
     callback?: Callback;
 }
 export interface CrawlerOptions extends BaseOptions {
+    hideDefaultLog?: boolean;
     concurrency?: number;
     browerConfig?: LaunchOptions;
     end?: Function;

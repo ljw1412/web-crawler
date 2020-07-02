@@ -1,6 +1,6 @@
 import Page from './Page';
 import Browser from './Browser';
-import { Callback, Filter, CrawlerOptions, CrawlerDefaultOptions, Listener, PageOptions } from './base';
+import { Callback, Filter, CrawlerOptions, Listener, PageOptions } from './base';
 export default class Crawler {
     private _queue;
     private _concurrency;
@@ -13,12 +13,15 @@ export default class Crawler {
     private _emitter;
     private _readyExitTimer;
     private _pageId;
+    private _hideDefaultLog;
     browser: Browser;
-    default: CrawlerDefaultOptions;
+    default: import("./base").CrawlerDefaultOptions;
     private get _eventTypeCount();
     constructor(options?: CrawlerOptions);
     static use(plugin: Function): typeof Crawler;
-    _getDefaultConfig(): CrawlerDefaultOptions;
+    _initHeaders(headers: Record<string, any>): {
+        'User-Agent': string;
+    } & Record<string, any>;
     _callEndFunction(): void;
     _updateReadyExitTimer(): Promise<void>;
     _worker(page: Page, done: Callback): Promise<void>;

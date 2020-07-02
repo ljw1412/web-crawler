@@ -44,6 +44,7 @@ interface BaseOptions {
 }
 
 export interface CrawlerOptions extends BaseOptions {
+  hideDefaultLog?: boolean
   concurrency?: number
   browerConfig?: LaunchOptions
   end?: Function
