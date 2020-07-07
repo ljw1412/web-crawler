@@ -22,6 +22,7 @@ export default class Crawler {
     _initHeaders(headers: Record<string, any>): {
         'User-Agent': string;
     } & Record<string, any>;
+    _getDefaultConfig(): import("./base").CrawlerDefaultOptions;
     _callEndFunction(): void;
     _updateReadyExitTimer(): Promise<void>;
     _worker(page: Page, done: Callback): Promise<void>;

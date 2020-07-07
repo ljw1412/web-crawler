@@ -29,7 +29,7 @@ export default class Crawler {
   private _pageId = 0
   private _hideDefaultLog!: boolean
   browser!: Browser
-  default = getDefaultConfig()
+  default = this._getDefaultConfig()
 
   private get _eventTypeCount() {
     return this._emitter.eventNames().length
@@ -66,6 +66,10 @@ export default class Crawler {
 
   _initHeaders(headers: Record<string, any>) {
     return Object.assign({ 'User-Agent': this.default['User-Agent'] }, headers)
+  }
+
+  _getDefaultConfig() {
+    return getDefaultConfig()
   }
 
   _callEndFunction() {
