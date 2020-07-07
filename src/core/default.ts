@@ -51,7 +51,7 @@ export async function superagentRequest(page: Page, cbData: CallbackData) {
       } catch (error) {
         emitter.errorLog(
           'SyntaxError',
-          `#${id} ${url}\n$JSON解析错误: {error.message}`,
+          `#${id} ${url}\n$JSON解析错误: ${error.message}`,
           { error, page }
         )
       }
