@@ -1,6 +1,6 @@
 {
   "name": "@ljw1412/web-crawler",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "description": "基于Node.js的网络爬虫",
   "keywords": [
     "crawler",

@@ -141,7 +141,9 @@ const { Crawler, Page, logger } = require('@ljw1412/web-crawler')
 const c = new Crawler()
 
 async function axiosRequest(page, data) {
-  const { id, type, url, timeout, headers, proxy, emitter } = page
+  const { id, type, url, timeout, headers, proxy, method, data, query, emitter } = page
+  
+  emitter.infoLog('Before Request', `#${id} axios:${url}`, { page })
   const options = { timeout, headers }
   if (['image', 'file'].includes(type)) options.responseType = 'arraybuffer'
   if (proxy) {
@@ -151,21 +153,29 @@ async function axiosRequest(page, data) {
     emitter.warnLog('Request Proxy', `#${id} ${url} -> ${proxy}`, { page })
   }
 
-  emitter.infoLog('Before Request', `#${id} axios:${url}`, { page })
-  const resp = await axios.get(url, options)
-  data.raw = resp.data
+  let resp
+  if (method === 'POST') {
+    resp = await axios.post(url, data, options)
+  } else {
+    resp = await axios.get(url, Object.assign(options, { params: query }))
+  }
+  cbData.raw = resp.data
 
   switch (type) {
     case 'html':
       data.$ = cheerio.load(data.raw)
       break
     case 'json':
+      if (typeof cbData.raw === 'object') {
+        cbData.json = cbData.raw
+        break
+      }
       try {
         data.json = JSON.parse(data.raw)
       } catch (err) {
         emitter.errorLog(
           'SyntaxError',
-          `#${id} ${url}\n$JSON解析错误: {error.message}`,
+          `#${id} ${url}\n$JSON解析错误: ${error.message}`,
           { error, page }
         )
       }
