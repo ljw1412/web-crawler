@@ -1,6 +1,6 @@
-# @ljw1412/web-crawler
+# @ljw1412/web-crawler-lite
 
-[![npm version](https://img.shields.io/npm/v/@ljw1412/web-crawler?style=flat-square)](https://www.npmjs.com/package/@ljw1412/web-crawler)
+[![npm version](https://img.shields.io/npm/v/@ljw1412/web-crawler-lite?style=flat-square)](https://www.npmjs.com/package/@ljw1412/web-crawler-lite)
 
 这是一个爬虫库。
 
@@ -12,7 +12,6 @@
   - [x] 自由处理返回数据
   - [x] 允许自定义使用网络库(默认使用`superagent`)
   - [x] 自定义请求头
-  - [x] 动态页面的数据爬取
   - [X] 请求代理
   - [X] 简单的插件扩展支持
   - [X] 请求方法支持GET/POST(允许带参数)
@@ -233,35 +232,6 @@ const page = new Page({
 })
 ```
 
-## 动态页面爬取
-
-现在很多页面都是用了`SPA`。此时使用普通请求的方式去获取页面数据，会出现页面节点未渲染的情况。
-
-此时你可以将Page的javascript设置为`true`，此时该请求将会以无头浏览器的模式去加载页面（因为会执行页面脚本代码因此性能会有所下降）。
-
-```js
-import { Crawler, Page, logger } from '../src/index'
-
-const c = new Crawler()
-
-c.add(
-  new Page({
-    type: 'html',
-    url: 'https://www.baidu.com',
-    javascript: true,
-    callback: (err, { page, raw, $ }) => {
-      if (err) {
-        logger.error(err.message)
-        return
-      }
-      logger.success('[请求成功]', raw)
-    }
-  })
-)
-
-c.start()
-```
-
 ## 代理请求
 
 ```js
@@ -292,7 +262,6 @@ new Page({
   - callback     请求完成后的回调 `(err, data) => void`。
   - type         页面类型(`html, image, file, json`或自定义字符串)。
   - url          页面资源地址。
-  - javascript   是否加载页面的js。
   - tag          标签，用于回调标记。
   - marker       自定义标记数据对象。
   - method       请求方法，可选值GET/POST,默认GET

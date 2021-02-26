@@ -1,5 +1,4 @@
 import Page from './Page'
-import Browser from './Browser'
 import cheerio from 'cheerio'
 import { noop, getDefaultConfig, undefinedCallback } from './default'
 import {
@@ -28,7 +27,6 @@ export default class Crawler {
   private _readyExitTimer!: NodeJS.Timer
   private _pageId = 0
   private _hideDefaultLog!: boolean
-  browser!: Browser
   default = this._getDefaultConfig()
 
   private get _eventTypeCount() {
@@ -41,7 +39,6 @@ export default class Crawler {
       hideDefaultLog = false,
       timeout = this.default.timeout,
       headers = {},
-      browerConfig,
       proxy = '',
       callback,
       end
@@ -56,7 +53,6 @@ export default class Crawler {
     this._hideDefaultLog = hideDefaultLog
     this._emitter.printConsole = !hideDefaultLog
     this._initQueue(concurrency)
-    this.browser = new Browser(browerConfig)
   }
 
   static use(plugin: Function) {
@@ -82,35 +78,15 @@ export default class Crawler {
 
   // 更新准备退出的计时器
   async _updateReadyExitTimer() {
-    clearTimeout(this._readyExitTimer)
-    if (this.browser._launching) {
-      const pageCount = (await this.browser.getPageCount()) - 1
-      if (pageCount) {
-        this._readyExitTimer = setTimeout(() => {
-          this._updateReadyExitTimer()
-        }, 3000)
-      } else {
-        this.browser.destroy()
-        clearTimeout(this._readyExitTimer)
-        this._callEndFunction()
-      }
-    } else {
-      this._callEndFunction()
-    }
+    this._callEndFunction()
   }
 
   async _worker(page: Page, done: Callback) {
-    const { id, url, javascript } = page
+    const { id, url } = page
     const data: CallbackData = { raw: '', page }
     let error = null
     try {
-      if (javascript) {
-        const content = await this.browser.getSourceCode(page)
-        data.raw = content
-        data.$ = cheerio.load(data.raw)
-      } else {
-        await this.default.request(page, data)
-      }
+      await this.default.request(page, data)
     } catch (err) {
       error = err
     }
@@ -188,15 +164,6 @@ export default class Crawler {
     let pages = Array.isArray(page) ? page : [page]
     pages = pages.filter(this._filter)
     pages.forEach(page => {
-      if (page.method === 'POST' && page.javascript) {
-        const { id, url } = page
-        this._emitter.errorLog(
-          'Not Supported',
-          `#${id} ${url}\n动态页面加载只支持 GET 请求`,
-          { page }
-        )
-        return
-      }
       if (!page.timeout) page.timeout = this._timeout
       if (!page.proxy) page.proxy = this._proxy
       page.id = this._pageId++

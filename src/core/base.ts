@@ -1,6 +1,5 @@
 import fastq from 'fastq'
 import Page from './Page'
-import { LaunchOptions } from 'puppeteer'
 
 export interface CallbackData {
   raw: string
@@ -46,14 +45,12 @@ interface BaseOptions {
 export interface CrawlerOptions extends BaseOptions {
   hideDefaultLog?: boolean
   concurrency?: number
-  browerConfig?: LaunchOptions
   end?: Function
 }
 
 export interface PageOptions extends BaseOptions {
   type: 'html' | 'image' | 'file' | 'json' | string
   url: string
-  javascript?: boolean
   tag?: string
   marker?: Record<string, any>
   method?: 'GET' | 'POST'
