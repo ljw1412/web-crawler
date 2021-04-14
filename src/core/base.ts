@@ -1,4 +1,5 @@
 import fastq from 'fastq'
+import CookieJar from 'cookiejar'
 import Page from './Page'
 
 export interface CallbackData {
@@ -7,6 +8,7 @@ export interface CallbackData {
   $?: CheerioSelector
   json?: Record<string, any> | null
   buffer?: Buffer
+  cookie?: ReadonlyArray<CookieJar.Cookie> & { toValueString(): string }
   [key: string]: any
 }
 

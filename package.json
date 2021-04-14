@@ -1,6 +1,6 @@
 {
   "name": "@ljw1412/web-crawler-lite",
-  "version": "0.0.01",
+  "version": "0.1.00",
   "description": "基于Node.js的网络爬虫(轻量版)，该版本不支持动态页面爬取。",
   "keywords": [
     "crawler",
@@ -36,15 +36,17 @@
   "homepage": "https://github.com/ljw1412/web-crawler#readme",
   "dependencies": {
     "@types/cheerio": "0.22.21",
+    "@types/cookiejar": "^2.1.2",
     "@types/superagent": "^4.1.10",
     "@types/superagent-proxy": "^2.0.0",
     "@types/ws": "^7.4.0",
     "chalk": "^4.1.0",
     "cheerio": "^1.0.0-rc.3",
+    "cookiejar": "^2.1.2",
     "fastq": "^1.7.0",
+    "proxy-agent": "^4.0.1",
     "superagent": "^6.1.0",
     "superagent-proxy": "^2.1.0",
-    "proxy-agent": "^4.0.1",
     "ws": "^7.4.3"
   },
   "devDependencies": {

@@ -1,14 +1,17 @@
 /// <reference types="cheerio" />
 /// <reference types="node" />
 import fastq from 'fastq';
+import CookieJar from 'cookiejar';
 import Page from './Page';
-import { LaunchOptions } from 'puppeteer';
 export interface CallbackData {
     raw: string;
     page: Page;
     $?: CheerioSelector;
     json?: Record<string, any> | null;
     buffer?: Buffer;
+    cookie?: ReadonlyArray<CookieJar.Cookie> & {
+        toValueString(): string;
+    };
     [key: string]: any;
 }
 export declare type Callback = (err: Error | null, data: CallbackData) => void;
@@ -37,13 +40,11 @@ interface BaseOptions {
 export interface CrawlerOptions extends BaseOptions {
     hideDefaultLog?: boolean;
     concurrency?: number;
-    browerConfig?: LaunchOptions;
     end?: Function;
 }
 export interface PageOptions extends BaseOptions {
     type: 'html' | 'image' | 'file' | 'json' | string;
     url: string;
-    javascript?: boolean;
     tag?: string;
     marker?: Record<string, any>;
     method?: 'GET' | 'POST';

@@ -1,5 +1,4 @@
 import Page from './Page';
-import Browser from './Browser';
 import { Callback, Filter, CrawlerOptions, Listener, PageOptions } from './base';
 export default class Crawler {
     private _queue;
@@ -14,7 +13,6 @@ export default class Crawler {
     private _readyExitTimer;
     private _pageId;
     private _hideDefaultLog;
-    browser: Browser;
     default: import("./base").CrawlerDefaultOptions;
     private get _eventTypeCount();
     constructor(options?: CrawlerOptions);

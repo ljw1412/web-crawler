@@ -1,5 +1,6 @@
 import cheerio from 'cheerio'
 import request from 'superagent'
+import CookieJar from 'cookiejar'
 import { CallbackData, CrawlerDefaultOptions } from './base'
 import Page from './Page'
 
@@ -38,7 +39,12 @@ export async function superagentRequest(page: Page, cbData: CallbackData) {
     emitter.warnLog('Request Proxy', `#${id} ${url} -> ${proxy}`, { page })
   }
   const resp = await req
+
+  // 储存cookie
+  const cookie = new CookieJar.CookieJar()
+  cookie.setCookies(resp.get('Set-Cookie'))
   // 数据处理组装到data
+  cbData.cookie = cookie.getCookies(CookieJar.CookieAccessInfo.All)
   switch (type) {
     case 'html':
       cbData.raw = resp.text

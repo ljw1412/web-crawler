@@ -128,7 +128,7 @@ describe('Crawler', function() {
       this.crawler.addPage({
         type: 'html',
         url: 'http://www.google.com',
-        proxy: 'http://127.0.0.1:1087',
+        proxy: 'http://127.0.0.1:1086',
         callback: (err, { $ }) => {
           if (err) {
             reject(err)
