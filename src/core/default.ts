@@ -20,7 +20,7 @@ export async function superagentRequest(page: Page, cbData: CallbackData) {
     method,
     data,
     query,
-    emitter
+    emitter,
   } = page
 
   emitter.infoLog('Before Request', `#${id} superagent:${url}`, { page })
@@ -41,10 +41,13 @@ export async function superagentRequest(page: Page, cbData: CallbackData) {
   const resp = await req
 
   // 储存cookie
-  const cookie = new CookieJar.CookieJar()
-  cookie.setCookies(resp.get('Set-Cookie'))
-  // 数据处理组装到data
-  cbData.cookie = cookie.getCookies(CookieJar.CookieAccessInfo.All)
+  const respSetCookie = resp.get('Set-Cookie')
+  if (respSetCookie) {
+    const cookie = new CookieJar.CookieJar()
+    cookie.setCookies(respSetCookie)
+    // 数据处理组装到data
+    cbData.cookie = cookie.getCookies(CookieJar.CookieAccessInfo.All)
+  }
   switch (type) {
     case 'html':
       cbData.raw = resp.text
@@ -82,6 +85,6 @@ export function getDefaultConfig(): CrawlerDefaultOptions {
     timeout: 20000,
     request: superagentRequest,
     'User-Agent':
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36',
   }
 }
