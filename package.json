@@ -1,6 +1,6 @@
 {
   "name": "@ljw1412/web-crawler-lite",
-  "version": "0.1.01",
+  "version": "0.1.2",
   "description": "基于Node.js的网络爬虫(轻量版)，该版本不支持动态页面爬取。",
   "keywords": [
     "crawler",

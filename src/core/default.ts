@@ -69,6 +69,8 @@ export async function superagentRequest(page: Page, cbData: CallbackData) {
     case 'file':
       cbData.buffer = resp.body
       break
+    default:
+      cbData.raw = resp.text || resp.body
   }
 }
 
