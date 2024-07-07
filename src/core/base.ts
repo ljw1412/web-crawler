@@ -39,6 +39,7 @@ export interface CrawlerDefaultOptions {
 
 interface BaseOptions {
   timeout?: number
+  delay?: number
   proxy?: string
   headers?: RequsetHeaders
   callback?: Callback

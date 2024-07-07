@@ -4,6 +4,7 @@ export default class Crawler {
     private _queue;
     private _concurrency;
     private _timeout;
+    private _delay;
     private _headers;
     private _proxy;
     private _filter;
@@ -30,6 +31,7 @@ export default class Crawler {
     on<T extends string | symbol>(event: T, listener: Listener<T>): this;
     off(event: string | symbol, listener: (...args: any[]) => void): this;
     timeout(timeout: number): this;
+    delay(delay: number): this;
     callback(callback: Callback): this;
     filter(filter: Filter): this;
     add(page: Page | Page[]): this;
@@ -37,4 +39,5 @@ export default class Crawler {
     start(): void;
     pause(): void;
     stop(): any;
+    stopAndDrain(): any;
 }

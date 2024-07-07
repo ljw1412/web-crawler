@@ -84,6 +84,7 @@ export function undefinedCallback(err: Error | null, { page }: CallbackData) {
  */
 export function getDefaultConfig(): CrawlerDefaultOptions {
   return {
+    delay: 0,
     timeout: 20000,
     request: superagentRequest,
     'User-Agent':

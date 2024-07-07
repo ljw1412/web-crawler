@@ -7,18 +7,19 @@
 顺便学习`Typescript` 、以及对项目架构的思考。
 
 - 功能
-  - [x] TS支持
+  - [x] TS 支持
   - [x] 可以并发爬取
   - [x] 自由处理返回数据
   - [x] 允许自定义使用网络库(默认使用`superagent`)
   - [x] 自定义请求头
-  - [X] 请求代理
-  - [X] 简单的插件扩展支持
-  - [X] 请求方法支持GET/POST(允许带参数)
-  - [X] 自定义日志
+  - [x] 请求代理
+  - [x] 简单的插件扩展支持
+  - [x] 请求方法支持 GET/POST(允许带参数)
+  - [x] 自定义日志
   - 其他功能构思中……
 
 ## 安装
+
 ```sh
 # 使用 npm
 npm install @ljw1412/web-crawler
@@ -27,6 +28,7 @@ yarn add @ljw1412/web-crawler
 ```
 
 ## 基础用法
+
 ```javascript
 const { Crawler, Page, logger } = require('@ljw1412/web-crawler')
 
@@ -48,7 +50,7 @@ c.add(new Page({ type: 'html', url: 'https://jd.com' }))
 // 以Page数组的形式添加
 c.add([
   new Page({ type: 'html', url: 'https://www.tmall.com' }),
-  new Page({ type: 'html', url: 'https://www.taobao.com' })
+  new Page({ type: 'html', url: 'https://www.taobao.com' }),
 ])
 // 也可以单独设置回调事件
 c.add(
@@ -63,7 +65,7 @@ c.add(
         // $ 采用 cheerio，一个专为服务端设计的实现jquery核心功能的包
         logger.info('[Good Luck!]', $('title').text())
       }
-    }
+    },
   })
 )
 
@@ -88,9 +90,10 @@ const { Crawler, Page, logger } = require('@ljw1412/web-crawler')
 
 const c = new Crawler()
 
-c.add([new Page({ type: 'html', url: 'https://jd.com' }),
+c.add([
+  new Page({ type: 'html', url: 'https://jd.com' }),
   new Page({ type: 'html', url: 'https://www.tmall.com' }),
-  new Page({ type: 'html', tag: 'no-money', url: 'https://www.taobao.com' })
+  new Page({ type: 'html', tag: 'no-money', url: 'https://www.taobao.com' }),
 ])
 
 // 监听所有的成功回调
@@ -115,7 +118,7 @@ c.on('data#no-money', ({ page, raw, $ }) => {
 })
 
 // 监听所有的错误
-c.on('error', error => {
+c.on('error', (error) => {
   logger.error('[error]', error)
 })
 
@@ -123,7 +126,7 @@ c.on('end', () => {
   logger.success('[end]')
 })
 
-c.on('log', event => {
+c.on('log', (event) => {
   logger.info('[日志]', event)
 })
 
@@ -131,6 +134,7 @@ c.start()
 ```
 
 ## 自定义网络库
+
 ```javascript
 const axios = require('axios')
 const cheerio = require('cheerio')
@@ -140,8 +144,19 @@ const { Crawler, Page, logger } = require('@ljw1412/web-crawler')
 const c = new Crawler()
 
 async function axiosRequest(page, data) {
-  const { id, type, url, timeout, headers, proxy, method, data, query, emitter } = page
-  
+  const {
+    id,
+    type,
+    url,
+    timeout,
+    headers,
+    proxy,
+    method,
+    data,
+    query,
+    emitter,
+  } = page
+
   emitter.infoLog('Before Request', `#${id} axios:${url}`, { page })
   const options = { timeout, headers }
   if (['image', 'file'].includes(type)) options.responseType = 'arraybuffer'
@@ -193,7 +208,7 @@ c.add(
   new Page({
     type: 'html',
     url: 'http://www.google.com',
-    proxy: 'socks5://127.0.0.1:1086'
+    proxy: 'socks5://127.0.0.1:1086',
   })
 )
 
@@ -209,14 +224,15 @@ c.start()
 ```
 
 ## 自定义请求头
+
 ```javascript
 const c = new Crawler({
   concurrency: 5,
   // 设置默认的请求头，所有被添加的Page都会使用。
   headers: {
     'User-Agent':
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
-  }
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36',
+  },
 })
 
 const page = new Page({
@@ -227,8 +243,8 @@ const page = new Page({
   headers: {
     'User-Agent':
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10; rv:33.0) Gecko/20100101 Firefox/33.0',
-    Referer: 'https://localhost'
-  }
+    Referer: 'https://localhost',
+  },
 })
 ```
 
@@ -236,18 +252,18 @@ const page = new Page({
 
 ```js
 // 为全局设置默认代理，向该爬虫队列添加页面时，如果未设置页面代理，那么页面会使用默认代理。
-new Crawler({proxy: 'socks5://127.0.0.1:1086'})
+new Crawler({ proxy: 'socks5://127.0.0.1:1086' })
 
 // 为单个页面设置代理，优先级高于全局默认代理。
 // javascript 动态模式暂不支持代理请求。
 new Page({
   type: 'html',
   url: 'https://www.google.com',
-  proxy: 'socks5://127.0.0.1:1086'
+  proxy: 'socks5://127.0.0.1:1086',
 })
 ```
 
-----
+---
 
 ## API
 
@@ -256,32 +272,37 @@ new Page({
 创建一个页面实例。
 
 参数:
+
 - options
-  - timeout      超时时间(ms)，默认值 `20 * 1000`。
-  - headers      设置请求头。
-  - callback     请求完成后的回调 `(err, data) => void`。
-  - type         页面类型(`html, image, file, json`或自定义字符串)。
-  - url          页面资源地址。
-  - tag          标签，用于回调标记。
-  - marker       自定义标记数据对象。
-  - method       请求方法，可选值GET/POST,默认GET
-  - query        GET的请求数据
-  - data         POST的请求数据
+  - timeout 超时时间(ms)，默认值 `20 * 1000`。
+  - delay 延迟返回请求的时间(ms)。
+  - headers 设置请求头。
+  - callback 请求完成后的回调 `(err, data) => void`。
+  - type 页面类型(`html, image, file, json`或自定义字符串)。
+  - url 页面资源地址。
+  - tag 标签，用于回调标记。
+  - marker 自定义标记数据对象。
+  - method 请求方法，可选值 GET/POST,默认 GET
+  - query GET 的请求数据
+  - data POST 的请求数据
 
 ### new Crawler([options])
 
 创建一个新的爬虫实例。
 
 参数:
+
 - options 爬虫基础配置(对象的属性均为选填)。
-  - timeout        超时时间(ms)，默认值 `20 * 1000`。
-  - headers        设置请求头
-  - callback       请求完成后的回调 `(err, data) => void`。
-  - end            爬虫结束事件 `()=>void`
-  - concurrency    允许的并发数量
-  - worker         自定义请求方法 `(page, done) => void`，最后使用执行回调`done(err, data)`。
-  - browerConfig   同`puppeteer.launch([options])`中的`options`。
+  - timeout 超时时间(ms)，默认值 `20 * 1000`。
+  - delay 延迟返回请求的时间(ms)。
+  - headers 设置请求头
+  - callback 请求完成后的回调 `(err, data) => void`。
+  - end 爬虫结束事件 `()=>void`
+  - concurrency 允许的并发数量
+  - worker 自定义请求方法 `(page, done) => void`，最后使用执行回调`done(err, data)`。
+  - browerConfig 同`puppeteer.launch([options])`中的`options`。
   - hideDefaultLog 隐藏默认控制台日志输出，默认值`false`
+
 ### Crawler.use(plugin)
 
 - @param `plugin` <(Crawler) => void>
@@ -290,7 +311,7 @@ new Page({
 
 ### crawler.off(event,listener)
 
-- @param `event` \<string> 
+- @param `event` \<string>
 - @param `listener` \<Function>
 - @return `this` \<Crawler>
 
@@ -315,28 +336,35 @@ new Page({
 可以在运行时进行修改，对后面添加的页面有效。
 
 ### crawler.filter(filter)
+
 - @param `filter` (page: Page) => boolean
 - @return `this` \<Crawler>
 
-设置过滤方法。返回值为false将不会加入爬虫队列。可以在运行时进行修改，对后面添加的页面有效。
+设置过滤方法。返回值为 false 将不会加入爬虫队列。可以在运行时进行修改，对后面添加的页面有效。
 
-### crawler.add(page) 
+### crawler.add(page)
+
 - @param page \<Page>
 - @return `this` \<Crawler>
+
 ### crawler.add(pages)
+
 - @param page \<Page[]>
 - @return `this` \<Crawler>
 
 向队列中添加请求一个或多个页面([`Page`](#api))。
 
 ### crawler.addPage(pageOptions)
+
 - @param pageOptions \<PageOptions>
 - @return `this` \<Crawler>
+
 ### crawler.addPage(pagesOptions)
+
 - @param pagesOptions \<PageOptions[]>
 - @return `this` \<Crawler>
 
-向队列中添加请求一个或多个页面。这里传的是Page构造器的参数而不是Page实例。
+向队列中添加请求一个或多个页面。这里传的是 Page 构造器的参数而不是 Page 实例。
 
 ### crawler.start()
 
@@ -349,6 +377,10 @@ new Page({
 ### crawler.stop()
 
 停止爬取。
+
+### crawler.stopAndDrain()
+
+停止爬取并返回结束事件。
 
 ---
 

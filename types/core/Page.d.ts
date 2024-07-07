@@ -8,6 +8,7 @@ export default class Page {
     tag?: string;
     callback?: Callback;
     timeout?: number;
+    delay?: number;
     headers: RequsetHeaders;
     proxy: string;
     emitter: Emitter;

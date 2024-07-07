@@ -9,18 +9,20 @@ import {
   CrawlerOptions,
   Listener,
   RequsetHeaders,
-  PageOptions
+  PageOptions,
 } from './base'
 import fastq from 'fastq'
 import EventEmitter from '../utils/emitter'
+import { sleep } from '../utils/assist'
 
 export default class Crawler {
   private _queue!: Queue
   private _concurrency!: number
   private _timeout!: number
+  private _delay!: number
   private _headers!: RequsetHeaders
   private _proxy!: string
-  private _filter: Filter = _ => true
+  private _filter: Filter = (_) => true
   private _callback?: Callback
   private _end?: Function
   private _emitter = new EventEmitter()
@@ -38,14 +40,16 @@ export default class Crawler {
       concurrency = 1,
       hideDefaultLog = false,
       timeout = this.default.timeout,
+      delay = this.default.delay,
       headers = {},
       proxy = '',
       callback,
-      end
+      end,
     } = options
 
     this._concurrency = concurrency
     this._timeout = timeout
+    this._delay = delay
     this._headers = this._initHeaders(headers)
     this._proxy = proxy
     this._callback = callback
@@ -82,13 +86,15 @@ export default class Crawler {
   }
 
   async _worker(page: Page, done: Callback) {
-    const { id, url } = page
     const data: CallbackData = { raw: '', page }
     let error = null
     try {
       await this.default.request(page, data)
+      if (page.delay) {
+        await sleep(page.delay)
+      }
     } catch (err) {
-      error = err
+      error = err as Error
     }
     done(error, data)
   }
@@ -150,6 +156,11 @@ export default class Crawler {
     return this
   }
 
+  delay(delay: number) {
+    this._delay = delay
+    return this
+  }
+
   callback(callback: Callback) {
     this._callback = callback
     return this
@@ -163,8 +174,9 @@ export default class Crawler {
   add(page: Page | Page[]) {
     let pages = Array.isArray(page) ? page : [page]
     pages = pages.filter(this._filter)
-    pages.forEach(page => {
+    pages.forEach((page) => {
       if (!page.timeout) page.timeout = this._timeout
+      if (!page.delay) page.delay = this._delay
       if (!page.proxy) page.proxy = this._proxy
       page.id = this._pageId++
       page.emitter = this._emitter
@@ -177,7 +189,7 @@ export default class Crawler {
 
   addPage(page: PageOptions | PageOptions[]) {
     let pages = Array.isArray(page) ? page : [page]
-    this.add(pages.map(options => new Page(options)))
+    this.add(pages.map((options) => new Page(options)))
     return this
   }
 
@@ -194,5 +206,9 @@ export default class Crawler {
 
   stop() {
     return this._queue.kill()
+  }
+
+  stopAndDrain() {
+    return this._queue.killAndDrain()
   }
 }

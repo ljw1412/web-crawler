@@ -9,6 +9,7 @@ export default class Page {
   tag?: string
   callback?: Callback
   timeout?: number
+  delay?: number
   headers!: RequsetHeaders
   proxy!: string
   emitter!: Emitter
@@ -26,12 +27,13 @@ export default class Page {
       tag,
       callback,
       timeout,
+      delay,
       marker = {},
       headers = {},
       proxy = '',
       method = 'GET',
       query,
-      data
+      data,
     } = options
 
     this.type = type
@@ -40,6 +42,7 @@ export default class Page {
     this.callback = callback
     this.marker = marker
     this.timeout = timeout
+    this.delay = delay
     this.headers = headers
     this.proxy = proxy
     this.method = method

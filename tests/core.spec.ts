@@ -8,14 +8,14 @@ declare module 'mocha' {
   }
 }
 
-describe('Crawler', function() {
+describe('Crawler', function () {
   this.timeout(25000)
 
-  beforeEach(function() {
+  beforeEach(function () {
     this.crawler = new Crawler()
   })
 
-  it('[add]使用 crawler.add 添加一个页面', async function() {
+  it('[add]使用 crawler.add 添加一个页面', async function () {
     await new Promise((resolve, reject) => {
       this.crawler.add(
         new Page({
@@ -29,15 +29,15 @@ describe('Crawler', function() {
             if (!$) return assert(false, '$ is undefined.')
             const title = $('title').text()
             assert(title.includes('百度'))
-            resolve()
-          }
+            resolve(true)
+          },
         })
       )
       this.crawler.start()
     })
   })
 
-  it('[addPage]使用 crawler.addPage 添加一个页面', async function() {
+  it('[addPage]使用 crawler.addPage 添加一个页面', async function () {
     await new Promise((resolve, reject) => {
       this.crawler.addPage({
         type: 'html',
@@ -50,19 +50,19 @@ describe('Crawler', function() {
           if (!$) return assert(false, '$ is undefined.')
           const title = $('title').text()
           assert(title.includes('百度'))
-          resolve()
-        }
+          resolve(true)
+        },
       })
       this.crawler.start()
     })
   })
 
-  it('[Query]使用带参数的 GET 请求', async function() {
+  it('[Query]使用带参数的 GET 请求', async function () {
     await new Promise((resolve, reject) => {
       this.crawler.addPage({
         type: 'json',
-        url: 'http://api.isoyu.com/api/News/new_list',
-        query: { type: 1, page: 1 },
+        url: 'https://api.oioweb.cn/api/weather/weather',
+        query: { city_name: '上海市' },
         callback: (err, { json }) => {
           if (err) {
             reject(err)
@@ -70,19 +70,18 @@ describe('Crawler', function() {
           }
           if (!json) return assert(false, 'json is undefined.')
           assert(json.msg === 'success')
-          resolve()
-        }
+          resolve(true)
+        },
       })
       this.crawler.start()
     })
   })
 
-  it('[Data]使用带参数的 POST 请求', async function() {
+  it('[Data]使用带参数的 POST 请求', async function () {
     await new Promise((resolve, reject) => {
       this.crawler.addPage({
         type: 'json',
-        url:
-          'https://manga.bilibili.com/twirp/comic.v1.Comic/HomeRecommend?device=pc&platform=web',
+        url: 'https://manga.bilibili.com/twirp/comic.v1.Comic/HomeRecommend?device=pc&platform=web',
         method: 'POST',
         data: { page_num: 1, platform: 'phone', seed: 1, drag: 0 },
         callback: (err, { json }) => {
@@ -92,14 +91,14 @@ describe('Crawler', function() {
           }
           if (!json) return assert(false, 'json is undefined.')
           assert(json.code === 0)
-          resolve()
-        }
+          resolve(true)
+        },
       })
       this.crawler.start()
     })
   })
 
-  it('[custom]自定义请求', async function() {
+  it('[custom]自定义请求', async function () {
     this.crawler.default.request = axiosRequest
 
     await new Promise((resolve, reject) => {
@@ -114,14 +113,14 @@ describe('Crawler', function() {
           if (!$) return assert(false, '$ is undefined.')
           const title = $('title').text()
           assert(title.includes('百度'))
-          resolve()
-        }
+          resolve(true)
+        },
       })
       this.crawler.start()
     })
   })
 
-  it('[custom&proxy]自定义请求且设置代理', async function() {
+  it('[custom&proxy]自定义请求且设置代理', async function () {
     this.crawler.default.request = axiosRequest
 
     await new Promise((resolve, reject) => {
@@ -137,16 +136,16 @@ describe('Crawler', function() {
           if (!$) return assert(false, '$ is undefined.')
           const title = $('title').text()
           assert(title.includes('Google'))
-          resolve()
-        }
+          resolve(true)
+        },
       })
 
       this.crawler.start()
     })
   })
 
-  it('[proxy]设置 crawler.proxy', async function() {
-    const c = new Crawler({ proxy: 'socks5://127.0.0.1:1086' })
+  it('[proxy]设置 crawler.proxy', async function () {
+    const c = new Crawler({ proxy: 'socks5://127.0.0.1:1085' })
 
     await new Promise((resolve, reject) => {
       c.addPage({
@@ -160,19 +159,19 @@ describe('Crawler', function() {
           if (!$) return assert(false, '$ is undefined.')
           const title = $('title').text()
           assert(title.includes('Google'))
-          resolve()
-        }
+          resolve(true)
+        },
       })
       c.start()
     })
   })
 
-  it('[proxy]设置 page.proxy', async function() {
+  it('[proxy]设置 page.proxy', async function () {
     await new Promise((resolve, reject) => {
       this.crawler.addPage({
         type: 'html',
         url: 'https://www.google.com',
-        proxy: 'socks5://127.0.0.1:1086',
+        proxy: 'socks5://127.0.0.1:1085',
         callback: (err, { $ }) => {
           if (err) {
             reject()
@@ -181,8 +180,35 @@ describe('Crawler', function() {
           if (!$) return assert(false, '$ is undefined.')
           const title = $('title').text()
           assert(title.includes('Google'))
-          resolve()
-        }
+          resolve(true)
+        },
+      })
+      this.crawler.start()
+    })
+  })
+
+  it('[delay]设置 page.delay', async function () {
+    await new Promise((resolve, reject) => {
+      const startTime = Date.now()
+      this.crawler.addPage({
+        type: 'html',
+        url: 'http://www.baidu.com',
+        delay: 10 * 1000,
+        callback: (err, { $ }) => {
+          if (err) {
+            reject(err)
+            return assert(false, err)
+          }
+          if (!$) return assert(false, '$ is undefined.')
+          const title = $('title').text()
+          assert(title.includes('百度'))
+          const endTime = Date.now()
+          if (endTime - startTime > 10 * 1000) {
+            resolve(true)
+          } else {
+            reject('未符合延迟时间')
+          }
+        },
       })
       this.crawler.start()
     })
