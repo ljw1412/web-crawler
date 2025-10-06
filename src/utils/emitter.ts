@@ -57,8 +57,8 @@ export class Event {
  * @param notEmit 事件不传递
  */
 function QuickEmitBuilder(level: EvnetLevel) {
-  return function(
-    this: Emitter,
+  return function (
+    this: LooseEventEmitter,
     tag: string,
     message: string,
     store?: EventStore
@@ -85,4 +85,9 @@ export default class Emitter extends EventEmitter {
   warnLog = QuickEmitBuilder('warn')
   infoLog = QuickEmitBuilder('info')
   successLog = QuickEmitBuilder('success')
+}
+
+// 定义一个宽松的 EventEmitter 类型
+export type LooseEventEmitter = Emitter & {
+  emit(event: string | symbol, ...args: any[]): boolean
 }

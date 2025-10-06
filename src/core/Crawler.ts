@@ -1,5 +1,4 @@
 import Page from './Page'
-import cheerio from 'cheerio'
 import { noop, getDefaultConfig, undefinedCallback } from './default'
 import {
   Callback,
@@ -9,10 +8,10 @@ import {
   CrawlerOptions,
   Listener,
   RequsetHeaders,
-  PageOptions,
+  PageOptions
 } from './base'
 import fastq from 'fastq'
-import EventEmitter from '../utils/emitter'
+import EventEmitter, { LooseEventEmitter } from '../utils/emitter'
 import { sleep } from '../utils/assist'
 
 export default class Crawler {
@@ -25,8 +24,8 @@ export default class Crawler {
   private _filter: Filter = (_) => true
   private _callback?: Callback
   private _end?: Function
-  private _emitter = new EventEmitter()
-  private _readyExitTimer!: NodeJS.Timer
+  private _emitter: LooseEventEmitter = new EventEmitter()
+  private _readyExitTimer!: NodeJS.Timeout
   private _pageId = 0
   private _hideDefaultLog!: boolean
   default = this._getDefaultConfig()
@@ -44,7 +43,7 @@ export default class Crawler {
       headers = {},
       proxy = '',
       callback,
-      end,
+      end
     } = options
 
     this._concurrency = concurrency

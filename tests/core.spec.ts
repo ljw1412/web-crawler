@@ -30,7 +30,7 @@ describe('Crawler', function () {
             const title = $('title').text()
             assert(title.includes('百度'))
             resolve(true)
-          },
+          }
         })
       )
       this.crawler.start()
@@ -51,7 +51,7 @@ describe('Crawler', function () {
           const title = $('title').text()
           assert(title.includes('百度'))
           resolve(true)
-        },
+        }
       })
       this.crawler.start()
     })
@@ -61,17 +61,17 @@ describe('Crawler', function () {
     await new Promise((resolve, reject) => {
       this.crawler.addPage({
         type: 'json',
-        url: 'https://api.oioweb.cn/api/weather/weather',
-        query: { city_name: '上海市' },
+        url: 'https://whois.pconline.com.cn/ipJson.jsp',
+        query: { json: true, ip: '127.0.0.1' },
         callback: (err, { json }) => {
           if (err) {
             reject(err)
             return assert(false, err)
           }
           if (!json) return assert(false, 'json is undefined.')
-          assert(json.msg === 'success')
+          assert(json.proCode === '999999')
           resolve(true)
-        },
+        }
       })
       this.crawler.start()
     })
@@ -92,7 +92,7 @@ describe('Crawler', function () {
           if (!json) return assert(false, 'json is undefined.')
           assert(json.code === 0)
           resolve(true)
-        },
+        }
       })
       this.crawler.start()
     })
@@ -114,7 +114,7 @@ describe('Crawler', function () {
           const title = $('title').text()
           assert(title.includes('百度'))
           resolve(true)
-        },
+        }
       })
       this.crawler.start()
     })
@@ -137,7 +137,7 @@ describe('Crawler', function () {
           const title = $('title').text()
           assert(title.includes('Google'))
           resolve(true)
-        },
+        }
       })
 
       this.crawler.start()
@@ -145,7 +145,7 @@ describe('Crawler', function () {
   })
 
   it('[proxy]设置 crawler.proxy', async function () {
-    const c = new Crawler({ proxy: 'socks5://127.0.0.1:1085' })
+    const c = new Crawler({ proxy: 'socks5://127.0.0.1:1086' })
 
     await new Promise((resolve, reject) => {
       c.addPage({
@@ -160,7 +160,7 @@ describe('Crawler', function () {
           const title = $('title').text()
           assert(title.includes('Google'))
           resolve(true)
-        },
+        }
       })
       c.start()
     })
@@ -171,7 +171,7 @@ describe('Crawler', function () {
       this.crawler.addPage({
         type: 'html',
         url: 'https://www.google.com',
-        proxy: 'socks5://127.0.0.1:1085',
+        proxy: 'socks5://127.0.0.1:1086',
         callback: (err, { $ }) => {
           if (err) {
             reject()
@@ -181,7 +181,7 @@ describe('Crawler', function () {
           const title = $('title').text()
           assert(title.includes('Google'))
           resolve(true)
-        },
+        }
       })
       this.crawler.start()
     })
@@ -208,7 +208,7 @@ describe('Crawler', function () {
           } else {
             reject('未符合延迟时间')
           }
-        },
+        }
       })
       this.crawler.start()
     })

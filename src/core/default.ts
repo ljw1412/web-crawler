@@ -1,4 +1,4 @@
-import cheerio from 'cheerio'
+import * as cheerio from 'cheerio'
 import request from 'superagent'
 import CookieJar from 'cookiejar'
 import { CallbackData, CrawlerDefaultOptions } from './base'
@@ -20,7 +20,7 @@ export async function superagentRequest(page: Page, cbData: CallbackData) {
     method,
     data,
     query,
-    emitter,
+    emitter
   } = page
 
   emitter.infoLog('Before Request', `#${id} superagent:${url}`, { page })
@@ -60,8 +60,8 @@ export async function superagentRequest(page: Page, cbData: CallbackData) {
       } catch (error) {
         emitter.errorLog(
           'SyntaxError',
-          `#${id} ${url}\n$JSON解析错误: ${error.message}`,
-          { error, page }
+          `#${id} ${url}\n$JSON解析错误: ${(error as Error).message}`,
+          { error: error as Error, page }
         )
       }
       break
@@ -88,6 +88,6 @@ export function getDefaultConfig(): CrawlerDefaultOptions {
     timeout: 20000,
     request: superagentRequest,
     'User-Agent':
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36',
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
   }
 }

@@ -1,7 +1,6 @@
-/// <reference types="node" />
 import { EventEmitter } from 'events';
 import Page from '../core/Page';
-export declare type EvnetLevel = 'error' | 'warn' | 'info' | 'success';
+export type EvnetLevel = 'error' | 'warn' | 'info' | 'success';
 export interface EventStore {
     error?: Error | null;
     page: Page;
@@ -22,8 +21,11 @@ export default class Emitter extends EventEmitter {
     printConsole: boolean;
     get _eventTypeCount(): number;
     get hasErrorListener(): boolean;
-    errorLog: (this: Emitter, tag: string, message: string, store?: EventStore | undefined) => void;
-    warnLog: (this: Emitter, tag: string, message: string, store?: EventStore | undefined) => void;
-    infoLog: (this: Emitter, tag: string, message: string, store?: EventStore | undefined) => void;
-    successLog: (this: Emitter, tag: string, message: string, store?: EventStore | undefined) => void;
+    errorLog: (this: LooseEventEmitter, tag: string, message: string, store?: EventStore) => void;
+    warnLog: (this: LooseEventEmitter, tag: string, message: string, store?: EventStore) => void;
+    infoLog: (this: LooseEventEmitter, tag: string, message: string, store?: EventStore) => void;
+    successLog: (this: LooseEventEmitter, tag: string, message: string, store?: EventStore) => void;
 }
+export type LooseEventEmitter = Emitter & {
+    emit(event: string | symbol, ...args: any[]): boolean;
+};

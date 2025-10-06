@@ -1,12 +1,11 @@
-/// <reference types="cheerio" />
-/// <reference types="node" />
+import { CheerioAPI } from 'cheerio';
 import fastq from 'fastq';
 import CookieJar from 'cookiejar';
 import Page from './Page';
 export interface CallbackData {
     raw: string;
     page: Page;
-    $?: CheerioSelector;
+    $?: CheerioAPI;
     json?: Record<string, any> | null;
     buffer?: Buffer;
     cookie?: ReadonlyArray<CookieJar.Cookie> & {
@@ -14,10 +13,10 @@ export interface CallbackData {
     };
     [key: string]: any;
 }
-export declare type Callback = (err: Error | null, data: CallbackData) => void;
-export declare type Filter = (page: Page) => boolean;
-export declare type Queue = fastq.queue;
-export declare type Listener<T> = T extends 'error' ? (error: Error, data: CallbackData) => void : (data: CallbackData) => void;
+export type Callback = (err: Error | null, data: CallbackData) => void;
+export type Filter = (page: Page) => boolean;
+export type Queue = fastq.queue;
+export type Listener<T> = T extends 'error' ? (error: Error, data: CallbackData) => void : (data: CallbackData) => void;
 export interface RequsetHeaders {
     Referer?: string;
     Cookie?: string;

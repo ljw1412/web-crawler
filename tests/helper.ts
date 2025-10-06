@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios'
-import proxyAgent from 'proxy-agent'
+import ProxyAgent from 'proxy-agent'
 import { Page, logger } from '@/index'
-import cheerio from 'cheerio'
+import * as cheerio from 'cheerio'
 import { CallbackData } from '@/core/base'
 
 export async function axiosRequest(page: Page, data: CallbackData) {
@@ -9,8 +9,8 @@ export async function axiosRequest(page: Page, data: CallbackData) {
   const options: AxiosRequestConfig = { timeout, headers }
   if (['image', 'file'].includes(type)) options.responseType = 'arraybuffer'
   if (proxy) {
-    options.httpAgent = new proxyAgent(proxy)
-    options.httpsAgent = new proxyAgent(proxy)
+    options.httpAgent = new ProxyAgent(proxy)
+    options.httpsAgent = new ProxyAgent(proxy)
     logger.warn('[请求代理]', url, '->', proxy)
   }
 

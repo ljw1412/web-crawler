@@ -50,7 +50,7 @@ c.add(new Page({ type: 'html', url: 'https://jd.com' }))
 // 以Page数组的形式添加
 c.add([
   new Page({ type: 'html', url: 'https://www.tmall.com' }),
-  new Page({ type: 'html', url: 'https://www.taobao.com' }),
+  new Page({ type: 'html', url: 'https://www.taobao.com' })
 ])
 // 也可以单独设置回调事件
 c.add(
@@ -65,7 +65,7 @@ c.add(
         // $ 采用 cheerio，一个专为服务端设计的实现jquery核心功能的包
         logger.info('[Good Luck!]', $('title').text())
       }
-    },
+    }
   })
 )
 
@@ -93,7 +93,7 @@ const c = new Crawler()
 c.add([
   new Page({ type: 'html', url: 'https://jd.com' }),
   new Page({ type: 'html', url: 'https://www.tmall.com' }),
-  new Page({ type: 'html', tag: 'no-money', url: 'https://www.taobao.com' }),
+  new Page({ type: 'html', tag: 'no-money', url: 'https://www.taobao.com' })
 ])
 
 // 监听所有的成功回调
@@ -154,7 +154,7 @@ async function axiosRequest(page, data) {
     method,
     data,
     query,
-    emitter,
+    emitter
   } = page
 
   emitter.infoLog('Before Request', `#${id} axios:${url}`, { page })
@@ -186,7 +186,7 @@ async function axiosRequest(page, data) {
       }
       try {
         data.json = JSON.parse(data.raw)
-      } catch (err) {
+      } catch (error) {
         emitter.errorLog(
           'SyntaxError',
           `#${id} ${url}\n$JSON解析错误: ${error.message}`,
@@ -208,7 +208,7 @@ c.add(
   new Page({
     type: 'html',
     url: 'http://www.google.com',
-    proxy: 'socks5://127.0.0.1:1086',
+    proxy: 'socks5://127.0.0.1:1086'
   })
 )
 
@@ -231,8 +231,8 @@ const c = new Crawler({
   // 设置默认的请求头，所有被添加的Page都会使用。
   headers: {
     'User-Agent':
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36',
-  },
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
+  }
 })
 
 const page = new Page({
@@ -243,8 +243,8 @@ const page = new Page({
   headers: {
     'User-Agent':
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10; rv:33.0) Gecko/20100101 Firefox/33.0',
-    Referer: 'https://localhost',
-  },
+    Referer: 'https://localhost'
+  }
 })
 ```
 
@@ -259,7 +259,7 @@ new Crawler({ proxy: 'socks5://127.0.0.1:1086' })
 new Page({
   type: 'html',
   url: 'https://www.google.com',
-  proxy: 'socks5://127.0.0.1:1086',
+  proxy: 'socks5://127.0.0.1:1086'
 })
 ```
 
